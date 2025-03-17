@@ -43,7 +43,8 @@ class RectangleBox extends ObjectManager {//make more classes like this
 	protected Node create_Object(float l, float h, float b) {
 		app = MaterialManager.set_Appearance(MaterialManager.White);   // set the appearance for the base
 		Appearance appTop = new Appearance();
-		appTop= MaterialManager.set_Appearance("C:\\Users\\nazif\\Desktop\\university\\comp2800\\comp2800Nazifa\\ludo.jpg" );   // set the appearance for the tower
+		System.err.println(System.getProperty("user.dir"));
+		appTop= MaterialManager.set_Appearance("ludo.jpg" );   // set the appearance for the tower
 		Box base =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
 		
 		base.getShape(Box.TOP).setAppearance(appTop);

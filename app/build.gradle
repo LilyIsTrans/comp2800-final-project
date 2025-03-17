@@ -10,7 +10,7 @@ plugins {
 }
 
 application {   
-    mainClass = 'this_team.App'
+    mainClass = 'this_team.LudoGame'
 }
 
 dependencies {
