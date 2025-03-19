@@ -6,6 +6,9 @@ import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.geometry.*;
 import org.jogamp.vecmath.*;
 
+import LudoProject.MaterialManager;
+import LudoProject.ObjectManager;
+
 
 
 
@@ -40,12 +43,12 @@ class RectangleBox extends ObjectManager {//make more classes like this
 		//System.out.println("hello");
 		Appearance a = new Appearance();
 		System.err.println(System.getProperty("user.dir"));
-		a = MaterialManager.set_Appearance("tile.jpg" );   // set the appearance for top of tile
+		a = MaterialManager.set_Appearance("tile2.jpg" );   // set the appearance for top of tile
 		objTG.addChild(create_Object(l, h, b, a));                   // attach the object to 'objTG'
 	}
 	
 	protected Node create_Object(float l, float h, float b, Appearance a) {
-		app = MaterialManager.set_Appearance(MaterialManager.White);   // set the appearance for the base
+		app = MaterialManager.set_Appearance(MaterialManager.Black);   // set the appearance for the base
 		Appearance appTop = a;
 		
 		Box base =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
