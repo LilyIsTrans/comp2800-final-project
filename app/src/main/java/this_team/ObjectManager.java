@@ -31,13 +31,28 @@ class RectangleBox extends ObjectManager {//make more classes like this
 		translator.setTranslation(new Vector3d(0.0f, -0.54f, 0f));
 		objTG = new TransformGroup(translator);            
 
-		objTG.addChild(create_Object(1f, 0.04f, 1f));                   // attach the object to 'objTG'
+		objTG.addChild(create_Object(1f, 0.05f, 1f));                   // attach the object to 'objTG'
 	}
 	public RectangleBox(Vector3d v, float l, float h, float b) {
 		Transform3D translator = new Transform3D();
 		translator.setTranslation(v);
-		objTG = new TransformGroup(translator);            
-		objTG.addChild(create_Object(l, h, b));                   // attach the object to 'objTG'
+		objTG = new TransformGroup(translator); 
+		//System.out.println("hello");
+		Appearance a = new Appearance();
+		System.err.println(System.getProperty("user.dir"));
+		a = MaterialManager.set_Appearance("tile.jpg" );   // set the appearance for top of tile
+		objTG.addChild(create_Object(l, h, b, a));                   // attach the object to 'objTG'
+	}
+	
+	protected Node create_Object(float l, float h, float b, Appearance a) {
+		app = MaterialManager.set_Appearance(MaterialManager.White);   // set the appearance for the base
+		Appearance appTop = a;
+		
+		Box base =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
+		
+		base.getShape(Box.TOP).setAppearance(appTop);
+		
+		return base;
 	}
 	
 	protected Node create_Object(float l, float h, float b) {

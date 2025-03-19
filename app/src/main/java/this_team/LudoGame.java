@@ -23,7 +23,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 
 	private static final long serialVersionUID = 1L;
 	private static JFrame frame;
-	private static int obj_Num = 2;
+	private static int obj_Num = 3;
 	private static ObjectManager[] objects = new ObjectManager[obj_Num];
 	
 	/* a function to build the content branch */
@@ -32,6 +32,8 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		BranchGroup sceneBG = new BranchGroup();
 		TransformGroup sceneTG = new TransformGroup();
 		objects[0] = new RectangleBox();//the board
+		objects[1] = new RectangleBox(new Vector3d(0.0f, 0f, 0.1f), 0.5f, 0.05f, 0.05f);//trying to generate a tile
+		objects[0].add_Child(objects[1].position_Object());
 		
 		sceneTG.addChild(objects[0].position_Object());//adding boards transform group to main transform group
 		
@@ -47,7 +49,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		Canvas3D canvas = new Canvas3D(config);
 		
 		SimpleUniverse su = new SimpleUniverse(canvas);    // create a SimpleUniverse
-		MaterialManager.define_Viewer(su, new Point3d(4.0d, 4.0d, 1.0d));
+		MaterialManager.define_Viewer(su, new Point3d(4.0d, 4.0d, 2.0d));
 
 		sceneBG.compile();		                           // optimize the BranchGroup
 		su.addBranchGraph(sceneBG);                        // attach the scene to SimpleUniverse
