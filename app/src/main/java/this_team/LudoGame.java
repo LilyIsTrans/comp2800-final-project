@@ -17,14 +17,13 @@ import org.jogamp.java3d.utils.universe.SimpleUniverse;
 import org.jogamp.vecmath.*;
 
 
-
 public class LudoGame extends JPanel implements ActionListener, KeyListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private static TransformGroup sceneTG;
 	private static JFrame frame;
 	private Canvas3D canvas3D;  
-	private static int obj_Num = 2;
+	private static int obj_Num = 30;
 	private static ObjectManager[] objects = new ObjectManager[obj_Num];
 	
 	/* a function to build the content branch */
@@ -52,7 +51,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		canvas3D.addKeyListener(this);                     // NOTE: enable key events 	
 		canvas3D.addMouseListener(this);                   // NOTE: enable mouse clicking 
 		SimpleUniverse su = new SimpleUniverse(canvas3D);    // create a SimpleUniverse
-		MaterialManager.define_Viewer(su, new Point3d(2.0d, 4d, 1.0d));
+		MaterialManager.define_Viewer(su, new Point3d(.50d, 2d, 1.50d));
 
 		sceneBG.compile();		                           // optimize the BranchGroup
 		su.addBranchGraph(sceneBG);                        // attach the scene to SimpleUniverse
@@ -69,13 +68,52 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		frame.getContentPane().add(new LudoGame(create_Scene()));  // create an instance of the class
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+	//Method to create the board
 	private static TransformGroup create_board()
 	{
         TransformGroup board = new TransformGroup();
 		objects[0] = new RectangleBox();//the board
-		objects[1] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.39f), 0.06f, 0.02f, 0.06f);//trying to generate a tile
+		
+		//tiles for green side
+		objects[1] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.264f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//first tile
 		objects[0].add_Child(objects[1].position_Object());
-		board = objects[0].position_Object();
+		objects[2] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.394f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[2].position_Object());
+		objects[3] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.524f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[3].position_Object());
+		objects[4] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.654f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[4].position_Object());
+		//safe space tile will be here
+		//.....
+		objects[5] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.916f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[5].position_Object());
+		objects[6] = new RectangleBox(new Vector3d(-0.005f, 0.05f, -0.916f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[6].position_Object());
+		objects[6] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.916f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[6].position_Object());
+		objects[7] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.785f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[7].position_Object());
+		//safe space tile
+		objects[8] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.654f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[8].position_Object());
+		objects[9] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.524f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[9].position_Object());
+		objects[10] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.394f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[10].position_Object());
+		objects[11] = new RectangleBox(new Vector3d(-0.135f, 0.05f, -0.264f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[11].position_Object());
+		
+		//tiles for red side
+		objects[12] = new RectangleBox(new Vector3d(-0.265f, 0.05f, -0.13f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[12].position_Object());
+		objects[13] = new RectangleBox(new Vector3d(-0.395f, 0.05f, -0.13f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[13].position_Object());
+		objects[14] = new RectangleBox(new Vector3d(-0.525f, 0.05f, -0.13f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[14].position_Object());
+		objects[15] = new RectangleBox(new Vector3d(-0.655f, 0.05f, -0.13f), 0.055f, 0.02f, 0.055f, "tile2.jpg");//tile
+		objects[0].add_Child(objects[15].position_Object());
+		
+		board.addChild( objects[0].position_Object());
 		
 		return board;
 	}

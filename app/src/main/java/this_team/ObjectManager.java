@@ -36,14 +36,14 @@ class RectangleBox extends ObjectManager {//make more classes like this
 
 		objTG.addChild(create_Object(1f, 0.05f, 1f));                   // attach the object to 'objTG'
 	}
-	public RectangleBox(Vector3d v, float l, float h, float b) {
+	public RectangleBox(Vector3d v, float l, float h, float b, String t) {
 		Transform3D translator = new Transform3D();
 		translator.setTranslation(v);
 		objTG = new TransformGroup(translator); 
 		//System.out.println("hello");
 		Appearance a = new Appearance();
 		System.err.println(System.getProperty("user.dir"));
-		a = MaterialManager.set_Appearance("tile2.jpg" );   // set the appearance for top of tile
+		a = MaterialManager.set_Appearance(t);   // set the appearance for top of tile
 		objTG.addChild(create_Object(l, h, b, a));                   // attach the object to 'objTG'
 	}
 	
