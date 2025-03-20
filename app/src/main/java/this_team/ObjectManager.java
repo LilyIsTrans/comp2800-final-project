@@ -6,8 +6,7 @@ import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.geometry.*;
 import org.jogamp.vecmath.*;
 
-import LudoProject.MaterialManager;
-import LudoProject.ObjectManager;
+
 
 
 
