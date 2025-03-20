@@ -18,7 +18,6 @@ import org.jogamp.vecmath.*;
 
 
 
-
 public class LudoGame extends JPanel implements ActionListener, KeyListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
@@ -53,7 +52,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		canvas3D.addKeyListener(this);                     // NOTE: enable key events 	
 		canvas3D.addMouseListener(this);                   // NOTE: enable mouse clicking 
 		SimpleUniverse su = new SimpleUniverse(canvas3D);    // create a SimpleUniverse
-		MaterialManager.define_Viewer(su, new Point3d(3.0d, 3.9d, 1.0d));
+		MaterialManager.define_Viewer(su, new Point3d(2.0d, 4d, 1.0d));
 
 		sceneBG.compile();		                           // optimize the BranchGroup
 		su.addBranchGraph(sceneBG);                        // attach the scene to SimpleUniverse
@@ -74,7 +73,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 	{
         TransformGroup board = new TransformGroup();
 		objects[0] = new RectangleBox();//the board
-		objects[1] = new RectangleBox(new Vector3d(0.45f, 0.5f, -0.47f), 0.05f, 0.02f, 0.05f);//trying to generate a tile
+		objects[1] = new RectangleBox(new Vector3d(0.13f, 0.05f, -0.39f), 0.06f, 0.02f, 0.06f);//trying to generate a tile
 		objects[0].add_Child(objects[1].position_Object());
 		board = objects[0].position_Object();
 		

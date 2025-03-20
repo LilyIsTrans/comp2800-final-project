@@ -31,7 +31,7 @@ public abstract class ObjectManager {
 class RectangleBox extends ObjectManager {//make more classes like this
 	public RectangleBox() {
 		Transform3D translator = new Transform3D();
-		translator.setTranslation(new Vector3d(0.0f, -0.54f, 0f));
+		translator.setTranslation(new Vector3d(0.0f, 0f, 0f));
 		objTG = new TransformGroup(translator);            
 
 		objTG.addChild(create_Object(1f, 0.05f, 1f));                   // attach the object to 'objTG'
@@ -48,7 +48,9 @@ class RectangleBox extends ObjectManager {//make more classes like this
 	}
 	
 	protected Node create_Object(float l, float h, float b, Appearance a) {
-		app = MaterialManager.set_Appearance(MaterialManager.Black);   // set the appearance for the base
+		System.err.println(System.getProperty("user.dir"));
+		app = MaterialManager.set_Appearance("concrete.jpg" );
+		//app = MaterialManager.set_Appearance(MaterialManager.Grey);   // set the appearance for the base
 		Appearance appTop = a;
 		
 		Box base =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
