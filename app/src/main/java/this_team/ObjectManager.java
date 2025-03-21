@@ -11,6 +11,7 @@ import org.jogamp.vecmath.*;
 
 
 
+
 public abstract class ObjectManager {
 	
 	protected TransformGroup objTG = new TransformGroup(); // use 'objTG' to position an object
@@ -27,6 +28,7 @@ public abstract class ObjectManager {
 
 		
 }
+//class for all box objects
 class RectangleBox extends ObjectManager {//make more classes like this
 	public RectangleBox() {
 		Transform3D translator = new Transform3D();
@@ -49,7 +51,7 @@ class RectangleBox extends ObjectManager {//make more classes like this
 	protected Node create_Object(float l, float h, float b, Appearance a) {
 		System.err.println(System.getProperty("user.dir"));
 		app = MaterialManager.set_Appearance("concrete.jpg" );
-		//app = MaterialManager.set_Appearance(MaterialManager.Grey);   // set the appearance for the base
+		
 		Appearance appTop = a;
 		
 		Box base =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
@@ -70,6 +72,32 @@ class RectangleBox extends ObjectManager {//make more classes like this
 		
 		return base;
 	}
+}
+//class for color tile objects 
+class ColorTile extends ObjectManager {//make more classes like this
+
+	public ColorTile(Vector3d v, float l, float h, float b, String t) {
+		Transform3D translator = new Transform3D();
+		translator.setTranslation(v);
+		objTG = new TransformGroup(translator); 
+	
+		System.err.println(System.getProperty("user.dir"));
+		
+		objTG.addChild(create_Object(l, h, b, t));                   // attach the object to 'objTG'
+	}
+	
+	protected Node create_Object(float l, float h, float b, String t) {
+		System.err.println(System.getProperty("user.dir"));
+		app = MaterialManager.set_Appearance(t);
+		
+		Box tile =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
+	
+		//Cylinder tile =  new Cylinder(l, h, Cylinder.GENERATE_NORMALS, 30, 30, app);
+		
+		//tile.getShape(Cylinder.TOP).setAppearance(app);
+		return tile;
+	}
+	
 }
 
 /* a derived class to create a string label and place it to the bottom of the self-made cone */
