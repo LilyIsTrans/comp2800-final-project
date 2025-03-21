@@ -263,6 +263,8 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		//objects[73] = new ColorTile(new Vector3d(0.27f, 0.05f, 0.135f), 0.06f, 0.02f, 0.39f, "yellow.jpg");//tile
 		//objects[0].add_Child(objects[73].position_Object());
 		
+		//home base blue
+		//...
 		board.addChild( objects[0].position_Object());
 		
 		return board;
