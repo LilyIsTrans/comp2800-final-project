@@ -6,9 +6,8 @@ import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.geometry.*;
 import org.jogamp.vecmath.*;
 
-
-
-
+import LudoProject.MaterialManager;
+import LudoProject.ObjectManager;
 
 
 
@@ -76,23 +75,23 @@ class RectangleBox extends ObjectManager {//make more classes like this
 //class for color tile objects 
 class ColorTile extends ObjectManager {//make more classes like this
 
-	public ColorTile(Vector3d v, float l, float h, float b, String t) {
+	public ColorTile(Vector3d v, float l, float h, String t) {
 		Transform3D translator = new Transform3D();
 		translator.setTranslation(v);
 		objTG = new TransformGroup(translator); 
 	
 		System.err.println(System.getProperty("user.dir"));
 		
-		objTG.addChild(create_Object(l, h, b, t));                   // attach the object to 'objTG'
+		objTG.addChild(create_Object(l, h, t));                   // attach the object to 'objTG'
 	}
 	
-	protected Node create_Object(float l, float h, float b, String t) {
+	protected Node create_Object(float l, float h, String t) {
 		System.err.println(System.getProperty("user.dir"));
 		app = MaterialManager.set_Appearance(t);
 		
-		Box tile =  new Box(l, h, b, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
+		Box tile =  new Box(l, h, l, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
 	
-		//Cylinder tile =  new Cylinder(l, h, Cylinder.GENERATE_NORMALS, 30, 30, app);
+		//Cylinder tile =  new Cylinder(l, h, Primitive.GENERATE_TEXTURE_COORDS|Cylinder.GENERATE_NORMALS, 30, 30, app);
 		
 		//tile.getShape(Cylinder.TOP).setAppearance(app);
 		return tile;
