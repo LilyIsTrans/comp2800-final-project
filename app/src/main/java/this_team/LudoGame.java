@@ -21,13 +21,14 @@ import LudoProject.RectangleBox;
 
 
 
+
 public class LudoGame extends JPanel implements ActionListener, KeyListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
 	private static TransformGroup sceneTG;
 	private static JFrame frame;
 	private Canvas3D canvas3D;  
-	private static int obj_Num = 100;
+	private static int obj_Num = 130;
 	private static ObjectManager[] objects = new ObjectManager[obj_Num];
 	
 	/* a function to build the content branch */
@@ -44,7 +45,7 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		
 		
 		sceneBG.addChild(sceneTG);
-		sceneBG.addChild(MaterialManager.add_Lights(MaterialManager.White, 1));//adding lights
+		sceneBG.addChild(MaterialManager.add_Lights(MaterialManager.White, 2));//adding lights
 		return sceneBG;
 	}
 	
@@ -248,27 +249,90 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		objects[0].add_Child(objects[46].position_Object());
 		objects[47] = new RectangleBox(new Vector3d(0.265f, 0.05f, -0.13f), 0.055f, 0.02f, 0.055f);//tile
 		objects[0].add_Child(objects[47].position_Object());
+		
 		//home base yellow
-		//objects[72] = new ColorTile(new Vector3d(0.59f, 0.05f, 0.265f), 0.39f, 0.02f, 0.06f, "yellow.jpg");//tile
-		//objects[0].add_Child(objects[72].position_Object());
-		//tiles
-		objects[72] = new ColorTile(new Vector3d(0.47f, 0.05f, 0.48f), 0.06f, 0.04f, "yellow.jpg");//tile
+		objects[72] = new ColorTile(new Vector3d(0.47f, 0.05f, 0.48f), 0.075f, 0.05f, "yellow.jpg");//tile
 		objects[0].add_Child(objects[72].position_Object());
-		objects[73] = new ColorTile(new Vector3d(0.705f, 0.05f, 0.48f), 0.06f, 0.04f, "yellow.jpg");//tile
+		objects[73] = new ColorTile(new Vector3d(0.705f, 0.05f, 0.48f), 0.075f, 0.05f, "yellow.jpg");//tile
 		objects[0].add_Child(objects[73].position_Object());
-		objects[74] = new ColorTile(new Vector3d(0.47f, 0.05f, 0.695f), 0.06f, 0.04f, "yellow.jpg");//tile
+		objects[74] = new ColorTile(new Vector3d(0.47f, 0.05f, 0.695f), 0.075f, 0.05f, "yellow.jpg");//tile
 		objects[0].add_Child(objects[74].position_Object());
-		objects[75] = new ColorTile(new Vector3d(0.705f, 0.05f, 0.695f), 0.06f, 0.04f, "yellow.jpg");//tile
+		objects[75] = new ColorTile(new Vector3d(0.705f, 0.05f, 0.695f), 0.075f, 0.05f, "yellow.jpg");//tile
 		objects[0].add_Child(objects[75].position_Object());
-		//objects[73] = new ColorTile(new Vector3d(0.27f, 0.05f, 0.135f), 0.06f, 0.02f, 0.39f, "yellow.jpg");//tile
-		//objects[0].add_Child(objects[73].position_Object());
+		//border tiles
+		objects[76] = new ColorTile(new Vector3d(0.26f, 0.05f, 0.59f), "yellow.jpg", 1, 0.75f);
+		objects[0].add_Child(objects[76].position_Object());
+		objects[77] = new ColorTile(new Vector3d(0.92f, 0.05f, 0.59f), "yellow.jpg", 1, 0.75f);
+		objects[0].add_Child(objects[77].position_Object());
+		objects[78] = new ColorTile(new Vector3d(0.515f, 0.05f, 0.265f), "yellow.jpg", 2, 0.42f);//opening border
+		objects[0].add_Child(objects[78].position_Object());
+		objects[79] = new ColorTile(new Vector3d(0.585f, 0.05f, 0.92f), "yellow.jpg", 2, 0.56f);
+		objects[0].add_Child(objects[79].position_Object());
 		
 		//home base blue
-		//...
+		objects[80] = new ColorTile(new Vector3d(-0.7135f, 0.05f, 0.695f), 0.075f, 0.05f, "nightsky.jpg");//tile
+		objects[0].add_Child(objects[80].position_Object());
+		objects[81] = new ColorTile(new Vector3d(-0.48f, 0.05f, 0.695f), 0.075f, 0.05f, "nightsky.jpg");//tile
+		objects[0].add_Child(objects[81].position_Object());
+		objects[82] = new ColorTile(new Vector3d(-0.7135f, 0.05f, 0.48f), 0.075f, 0.05f, "nightsky.jpg");//tile
+		objects[0].add_Child(objects[82].position_Object());
+		objects[83] = new ColorTile(new Vector3d(-0.48f, 0.05f, 0.48f), 0.075f, 0.05f, "nightsky.jpg");//tile
+		objects[0].add_Child(objects[83].position_Object());
+		//border tiles
+		
+		objects[84] = new ColorTile(new Vector3d(-0.265f, 0.05f, 0.525f), "nightsky.jpg", 1, 0.42f);//opening border
+		objects[0].add_Child(objects[84].position_Object());
+		objects[85] = new ColorTile(new Vector3d(-0.92, 0.05f, 0.59f), "nightsky.jpg", 1, 0.56f);
+		objects[0].add_Child(objects[85].position_Object());
+		objects[86] = new ColorTile(new Vector3d(-0.59f, 0.05f, 0.265f), "nightsky.jpg", 2, 0.75f);
+		objects[0].add_Child(objects[86].position_Object());
+		objects[87] = new ColorTile(new Vector3d(-0.59f, 0.05f, 0.92f), "nightsky.jpg", 2, 0.75f);
+		objects[0].add_Child(objects[87].position_Object());
+		
+		//home base Red
+		objects[88] = new ColorTile(new Vector3d(-0.48f, 0.05f, -0.482f), 0.075f, 0.05f, "red2.jpg");//tile
+		objects[0].add_Child(objects[88].position_Object());
+		objects[89] = new ColorTile(new Vector3d(-0.7135f, 0.05f, -0.482f), 0.075f, 0.05f, "red2.jpg");//tile
+		objects[0].add_Child(objects[89].position_Object());
+		objects[90] = new ColorTile(new Vector3d(-0.7135f, 0.05f, -0.698f), 0.075f, 0.05f, "red2.jpg");//tile
+		objects[0].add_Child(objects[90].position_Object());
+		objects[91] = new ColorTile(new Vector3d(-0.48f, 0.05f, -0.698f), 0.075f, 0.05f, "red2.jpg");//tile
+		objects[0].add_Child(objects[91].position_Object());
+		//border tiles
+		objects[92] = new ColorTile(new Vector3d(-0.265f, 0.05f, -0.59f), "red2.jpg", 1, 0.75f);
+		objects[0].add_Child(objects[92].position_Object());
+		objects[93] = new ColorTile(new Vector3d(-0.92f, 0.05f, -0.59f), "red2.jpg", 1, 0.75f);
+		objects[0].add_Child(objects[93].position_Object());
+		objects[94] = new ColorTile(new Vector3d(-0.59f, 0.05f, -0.92f), "red2.jpg", 2, 0.56f);
+		objects[0].add_Child(objects[94].position_Object());
+		objects[95] = new ColorTile(new Vector3d(-0.515f, 0.05f, -0.265f), "red2.jpg", 2, 0.42f);//opening tile
+		objects[0].add_Child(objects[95].position_Object());
+		
+		//home base green
+		objects[96] = new ColorTile(new Vector3d(0.47f, 0.05f, -0.698f), 0.075f, 0.05f, "green.jpg");//tile
+		objects[0].add_Child(objects[96].position_Object());
+		objects[97] = new ColorTile(new Vector3d(0.705f, 0.05f, -0.698f), 0.075f, 0.05f, "green.jpg");//tile
+		objects[0].add_Child(objects[97].position_Object());
+		objects[98] = new ColorTile(new Vector3d(0.705f, 0.05f, -0.482f), 0.075f, 0.05f, "green.jpg");//tile
+		objects[0].add_Child(objects[98].position_Object());
+		objects[99] = new ColorTile(new Vector3d(0.47f, 0.05f, -0.482f), 0.075f, 0.05f, "green.jpg");//tile
+		objects[0].add_Child(objects[99].position_Object());
+		//border tiles
+		objects[100] = new ColorTile(new Vector3d(0.92f, 0.05f, -0.59f), "green.jpg", 1, 0.56f);
+		objects[0].add_Child(objects[100].position_Object());
+		objects[101] = new ColorTile(new Vector3d(0.26f, 0.05f, -0.515f), "green.jpg", 1, 0.42f);//opening border
+		objects[0].add_Child(objects[101].position_Object());
+		objects[102] = new ColorTile(new Vector3d(0.59f, 0.05f, -0.26f), "green.jpg", 2, 0.75f);
+		objects[0].add_Child(objects[102].position_Object());
+		objects[103] = new ColorTile(new Vector3d(0.59f, 0.05f, -0.92f), "green.jpg", 2, 0.75f);
+		objects[0].add_Child(objects[103].position_Object());		
+		
+		
+		
 		board.addChild( objects[0].position_Object());
 		
 		return board;
-	}	
+	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {

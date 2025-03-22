@@ -79,21 +79,41 @@ class ColorTile extends ObjectManager {//make more classes like this
 		Transform3D translator = new Transform3D();
 		translator.setTranslation(v);
 		objTG = new TransformGroup(translator); 
-	
-		System.err.println(System.getProperty("user.dir"));
 		
 		objTG.addChild(create_Object(l, h, t));                   // attach the object to 'objTG'
 	}
 	
-	protected Node create_Object(float l, float h, String t) {
+	public ColorTile(Vector3d v, String t, int tilt, float h)
+	{
+		Transform3D translator = new Transform3D();
+		translator.setTranslation(v);
+		
+		if(tilt==1)//tilting the cylinder sideways
+		{
+			Transform3D axis = new Transform3D();
+			axis.rotX(-Math.PI / 2);
+			translator.mul(axis);//combining rotation and tilt
+		}
+		if(tilt==2)//tilting the cylinder sideways
+		{
+			Transform3D axis = new Transform3D();
+			axis.rotX(-Math.PI / 2);
+			axis.rotZ(Math.PI / 2);
+			translator.mul(axis);//combining rotation and tilt
+		}
+        objTG = new TransformGroup(translator); 
+		
+		objTG.addChild(create_Object(0.05f, h, t));
+	
+	}
+	
+	protected Node create_Object(float r, float h, String t) {
 		System.err.println(System.getProperty("user.dir"));
 		app = MaterialManager.set_Appearance(t);
 		
-		Box tile =  new Box(l, h, l, Primitive.GENERATE_TEXTURE_COORDS|Primitive.GENERATE_NORMALS, app);
 	
-		//Cylinder tile =  new Cylinder(l, h, Primitive.GENERATE_TEXTURE_COORDS|Cylinder.GENERATE_NORMALS, 30, 30, app);
+		Cylinder tile =  new Cylinder(r, h, Primitive.GENERATE_TEXTURE_COORDS|Cylinder.GENERATE_NORMALS, 30, 30, app);
 		
-		//tile.getShape(Cylinder.TOP).setAppearance(app);
 		return tile;
 	}
 	
