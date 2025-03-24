@@ -16,8 +16,9 @@ import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
 import org.jogamp.vecmath.*;
 
-import LudoProject.ColorTile;
 import LudoProject.RectangleBox;
+
+
 
 
 
@@ -325,7 +326,10 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		objects[102] = new ColorTile(new Vector3d(0.59f, 0.05f, -0.26f), "green.jpg", 2, 0.75f);
 		objects[0].add_Child(objects[102].position_Object());
 		objects[103] = new ColorTile(new Vector3d(0.59f, 0.05f, -0.92f), "green.jpg", 2, 0.75f);
-		objects[0].add_Child(objects[103].position_Object());		
+		objects[0].add_Child(objects[103].position_Object());	
+		//middle tile
+		objects[104] = new RectangleBox(new Vector3d(0.0f, 0.05f, 0f));
+		objects[0].add_Child(objects[104].position_Object());
 		
 		
 		
