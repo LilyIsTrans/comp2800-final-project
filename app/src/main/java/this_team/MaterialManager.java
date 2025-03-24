@@ -29,7 +29,7 @@ public class MaterialManager {
 	/* a function to create and return material definition */
 	public static Material set_Material(Color3f m_clr) {
 		Material mtl = new Material();
-		mtl.setShininess(32);                              
+		mtl.setShininess(108);                              
 		mtl.setAmbientColor(White);
 		mtl.setDiffuseColor(m_clr);
 		mtl.setSpecularColor(Grey);
