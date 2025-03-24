@@ -7,8 +7,6 @@ import org.jogamp.java3d.utils.geometry.*;
 import org.jogamp.vecmath.*;
 
 
-
-
 public abstract class ObjectManager {
 	
 	protected TransformGroup objTG = new TransformGroup(); // use 'objTG' to position an object
@@ -31,7 +29,7 @@ class RectangleBox extends ObjectManager {//make more classes like this
 		translator.setTranslation(new Vector3d(0.0f, -0.54f, 0f));
 		objTG = new TransformGroup(translator);            
 
-		objTG.addChild(create_Object(1f, 0.04f, 1f));                   // attach the object to 'objTG'
+		objTG.addChild(create_Object(1.5f, 0.04f, 1.5f));                   // attach the object to 'objTG'
 	}
 	public RectangleBox(Vector3d v, float l, float h, float b) {
 		Transform3D translator = new Transform3D();
