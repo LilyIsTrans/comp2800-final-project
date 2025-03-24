@@ -16,7 +16,7 @@ import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
 import org.jogamp.vecmath.*;
 
-import LudoProject.RectangleBox;
+
 
 
 
