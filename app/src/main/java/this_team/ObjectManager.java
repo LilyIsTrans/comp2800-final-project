@@ -2,9 +2,20 @@ package this_team;
 
 import java.awt.Font;
 
-import org.jogamp.java3d.*;
-import org.jogamp.java3d.utils.geometry.*;
-import org.jogamp.vecmath.*;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.Font3D;
+import org.jogamp.java3d.FontExtrusion;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Text3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.geometry.Box;
+import org.jogamp.java3d.utils.geometry.Cylinder;
+import org.jogamp.java3d.utils.geometry.Primitive;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
 
 
 
@@ -192,6 +203,24 @@ class ColorString extends ObjectManager {
 		
 		Appearance app = MaterialManager.set_Appearance(clr);    // use appearance to specify the string color
 		return new Shape3D(text3D, app);                   // return a string label with the appearance
+	}
+	
+	class PawnObject extends ObjectManager {            // PawnObject class definition
+		private String color;
+		private int pawnID;
+		
+		public PawnObject(String color, int id) {
+			this.color = color;
+			this.pawnID = id;
+		}
+		
+		@Override
+		protected Node create_Object() {  
+			Appearance appr = MaterialManager.set_Appearance(color);  
+			Sphere pawnSphere = new Sphere(0.08f, Primitive.GENERATE_NORMALS, appr);
+			pawnSphere.getShape().setUserData("pawn_"+color+"_"+pawnID);
+			return pawnSphere;
+		}
 	}
 	
 }
