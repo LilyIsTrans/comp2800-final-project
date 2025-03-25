@@ -6,15 +6,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.jogamp.java3d.*;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
-import org.jogamp.vecmath.*;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
 
 
 
@@ -23,7 +27,7 @@ import org.jogamp.vecmath.*;
 
 
 
-public class LudoGame extends JPanel implements ActionListener, KeyListener, MouseListener {
+public class LudoGame extends JPanel implements ActionListener, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private static TransformGroup sceneTG;
@@ -54,8 +58,11 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 	{
 		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 		canvas3D = new Canvas3D(config);
-		canvas3D.addKeyListener(this);                     // NOTE: enable key events 	
-		canvas3D.addMouseListener(this);                   // NOTE: enable mouse clicking 
+		canvas3D.addKeyListener(this);                    // NOTE: enable key events
+
+		PawnSelector pawnSelector = new PawnSelector(canvas3D, sceneBG);  // Pass in the scene root node
+        canvas3D.addMouseListener(pawnSelector);           //Alternative canvas3D. AddMouseListener (this);
+
 		SimpleUniverse su = new SimpleUniverse(canvas3D);    // create a SimpleUniverse
 		MaterialManager.define_Viewer(su, new Point3d(.50d, 2d, 1.50d));
 
@@ -338,35 +345,6 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener, Mou
 		return board;
 	}
 	
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
