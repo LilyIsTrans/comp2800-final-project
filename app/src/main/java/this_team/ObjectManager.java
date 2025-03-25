@@ -205,23 +205,5 @@ class ColorString extends ObjectManager {
 		return new Shape3D(text3D, app);                   // return a string label with the appearance
 	}
 	
-	class PawnObject extends ObjectManager {            // PawnObject class definition
-		private String color;
-		private int pawnID;
-		
-		public PawnObject(String color, int id) {
-			this.color = color;
-			this.pawnID = id;
-		}
-		
-		@Override
-		protected Node create_Object() {  
-			Appearance appr = MaterialManager.set_Appearance(color);  
-			Sphere pawnSphere = new Sphere(0.08f, Primitive.GENERATE_NORMALS, appr);
-			pawnSphere.getShape().setUserData("pawn_"+color+"_"+pawnID);
-			return pawnSphere;
-		}
-	}
-	
 }
 

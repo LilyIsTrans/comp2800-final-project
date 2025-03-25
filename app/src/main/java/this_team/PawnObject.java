@@ -2,9 +2,10 @@ package this_team;
 
 import java.util.HashMap;
 import org.jogamp.java3d.*;
+import org.jogamp.java3d.utils.geometry.Primitive;
 import org.jogamp.java3d.utils.geometry.Sphere;
 import org.jogamp.vecmath.*;
-import LudoProject.MaterialManager;
+import this_team.MaterialManager;
 
 public class PawnObject extends ObjectManager {
     private static HashMap<String, Integer> colorCounters = new HashMap<>(); 
@@ -21,21 +22,33 @@ public class PawnObject extends ObjectManager {
         objTG.addChild(create_Object());   
     }
 
-    @Override
-    protected Node create_Object() {      // Implement the parent abstract method
-        Appearance pawnApp = MaterialManager.set_Appearance(colorID); // Dynamic material acquisition
-        Sphere pawnGeom = new Sphere(0.08f, 
+@Override  
+    protected Node create_Object() { // 消除无用参数的方法版本[^3]
+        // 根据材料ID=4实现纹理与几何参数解耦[^4]
+        Appearance app = MaterialManager.set_Appearance(generatePawnTexture());
+        Sphere pawn = new Sphere(0.075f, 
             Sphere.GENERATE_NORMALS | Sphere.GENERATE_TEXTURE_COORDS, 
-            64, pawnApp);
-        
-        Shape3D pawnShape = pawnGeom.getShape();
-        pawnShape.setUserData(generateUID());        // Sets an object unique identifier
-        pawnShape.setCapability(Shape3D.ALLOW_PICKABLE_READ);// Enable the pick function
-        
-        return pawnShape;
+            64, app);
+        pawn.getShape().setUserData(this.generateUID());
+        return pawn;
     }
+    @Override
+    protected Node create_Object(float l, float h, float b) { 
 
+        Box base = new Box(l, h, b, 
+            Primitive.GENERATE_TEXTURE_COORDS | Primitive.GENERATE_NORMALS, 
+            generateBaseAppearance());
+        base.getShape(Box.TOP).setAppearance(generateTopAppearance());
+        return base;
+    }
     private String generateUID() {
-        return "pawn_" + colorID + "_" + pawnNum;    
+        return "pawn_" + System.currentTimeMillis() + "_" + this.hashCode();
+    }
+    private Appearance generatePawnTexture() {
+        return MaterialManager.set_Appearance(
+            this.colorID + "_texture"); 
+    }
+    private Appearance generateBaseAppearance() {
+        return MaterialManager.set_Appearance(getCurrentMaterialKey());
     }
 }
