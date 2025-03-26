@@ -344,7 +344,6 @@ public class LudoGame extends JPanel implements ActionListener, KeyListener {
 		
 		return board;
 	}
-	
 
 	@Override
 	public void keyTyped(KeyEvent e) {
