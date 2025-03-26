@@ -11,4 +11,7 @@ plugins {
 }
 
 rootProject.name = "Ludo"
-include("app")
+include("app", "list", "utilities")
+// build logic module declaration (added build-logic)
+includeBuild("build-logic") {  
+    }

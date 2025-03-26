@@ -5,3 +5,9 @@
 plugins {
     id("buildlogic.java-library-conventions")
 }
+
+dependencies {
+    api(project(":utilities"))            // Import tool module
+     testImplementation （libs.junit.api）    // Unified version management
+     testRuntimeOnly(libs.junit.engine)
+}
