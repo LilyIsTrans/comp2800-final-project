@@ -86,7 +86,7 @@ public class MaterialManager {
 	app.setTexture(MaterialManager.texture_Appearance(s));
 		
 		TextureAttributes textureAttrib= new TextureAttributes();
-		textureAttrib.setTextureMode(TextureAttributes.REPLACE);
+		textureAttrib.setTextureMode(TextureAttributes.MODULATE);
 		app.setTextureAttributes(textureAttrib);
 		
 		
