@@ -270,9 +270,20 @@ public class GameLogic {
   private float[][] getHomePositions(Team team) {
     if (team instanceof RedTeam) {
       return TeamConfig.Red.HOME_POSITIONS;
-    } else if (team instanceof YellowTeam) {
+    } 
+    
+    else if (team instanceof YellowTeam) {
       return TeamConfig.Yellow.HOME_POSITIONS;
     }
+
+    else if (team instanceof BlueTeam) {
+        return TeamConfig.Blue.HOME_POSITIONS;
+      }
+
+    else if (team instanceof GreenTeam) {
+        return TeamConfig.Green.HOME_POSITIONS;
+    }
+
     throw new IllegalArgumentException("Unknown team type");
   }
 

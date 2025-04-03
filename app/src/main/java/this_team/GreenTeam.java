@@ -26,7 +26,7 @@ public class GreenTeam extends PieceLogic {
         return TeamConfig.Green.END_POSITION;
     }
 
-    public void reset() {
+        public void reset() {
         for (int i = 0; i < 4; i++) {
             placeAtHomePosition(i); // Reuse existing method
         }
