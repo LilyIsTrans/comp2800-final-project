@@ -21,4 +21,6 @@ public interface Team {
   // win related methods
   boolean isFinished(int pieceIndex);  // New method
   void setFinished(int pieceIndex);    // New method
+  void reset();
+  
 }

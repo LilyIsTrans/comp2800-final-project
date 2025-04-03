@@ -17,6 +17,8 @@ public abstract class PieceLogic implements Team {
     // ===== NEW: Win condition tracking =====
     protected final boolean[] finishedPieces = new boolean[4]; // Tracks which pieces reached the end
 
+    
+
     public PieceLogic(float gridSize, float cellSize, String teamName, Color3f teamColor) throws FileNotFoundException {
         this.gridSize = gridSize;
         this.cellSize = cellSize;
@@ -138,4 +140,5 @@ public abstract class PieceLogic implements Team {
             finishedPieces[i] = false; // NEW: Initialize all pieces as not finished
         }
     }
+
 }

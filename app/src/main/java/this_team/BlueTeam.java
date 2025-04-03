@@ -21,4 +21,14 @@ public class BlueTeam extends PieceLogic {
     public int[][] getPath() {
         return TeamConfig.Blue.PATH;
     }
+
+    protected int[] getEndPosition() {
+        return TeamConfig.Red.END_POSITION;
+    }
+
+    public void reset() {
+        for (int i = 0; i < 4; i++) {
+            placeAtHomePosition(i); // Reuse existing method
+        }
+    }
 }

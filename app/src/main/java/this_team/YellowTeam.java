@@ -22,4 +22,15 @@ public class YellowTeam extends PieceLogic {
     public int[][] getPath() {
         return TeamConfig.Yellow.PATH;
     }
+
+    protected int[] getEndPosition() {
+        return TeamConfig.Yellow.END_POSITION;
+    }
+
+    @Override
+    public void reset() {
+      for (int i = 0; i < 4; i++) {
+        placeAtHomePosition(i); // Reuse existing method
+      }
+    }
 }

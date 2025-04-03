@@ -34,6 +34,8 @@ public class TeamConfig {
       {8, 9}, {8, 10}, {8, 11}, {8, 12}, {8, 13},
       {8, 14}, {7, 14}, {7, 13}, {7, 12}, {7, 11}, {7, 10}, {7, 9}, {7, 8}
     };
+
+    public static final int[] END_POSITION = {7, 8};
   }
 
   public static final class Yellow {
@@ -67,6 +69,8 @@ public class TeamConfig {
       {6, 5}, {6, 4}, {6, 3}, {6, 2}, {6, 1},
       {6, 0}, {7, 0}, {7, 1}, {7, 2}, {7, 3}, {7, 4}, {7, 5}, {7, 6}
     };
+
+    public static final int[] END_POSITION = {7, 6};
   }
 
   public static final class Blue {
@@ -102,6 +106,8 @@ public class TeamConfig {
       {13, 8}, {12, 8}, {11, 8}, {10, 8}, {9, 8},
       {8, 7}, {8, 6}, {7, 6}, {7, 7}, {7, 8}
     };
+
+    public static final int[] END_POSITION = {7, 8};
   }
 
   public static final class Green {
@@ -137,5 +143,7 @@ public class TeamConfig {
       {1, 6}, {2, 6}, {3, 6}, {4, 6}, {5, 6},
       {6, 7}, {6, 8}, {7, 8}, {7, 7}, {7, 6}
     };
+
+    public static final int[] END_POSITION = {7, 6};
   }
 }
