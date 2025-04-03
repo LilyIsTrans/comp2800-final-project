@@ -10,7 +10,7 @@ plugins {
 }
 
 application {   
-    mainClass = 'this_team.Main'
+    mainClass = 'this_team.Main' // Replace with your main class name
 }
 
 dependencies {

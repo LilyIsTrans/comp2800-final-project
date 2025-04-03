@@ -336,4 +336,10 @@ public class GameLogic {
     hasRolledSix = false;
     turnState = TurnState.NEEDS_ROLL;
   }
+
+  // tests for diceRoll
+    public void setCurrentDiceValue(int value) {
+        this.currentDiceValue = value;
+        this.hasRolledSix = (value == 6); // Update six flag too
+    }
 }
