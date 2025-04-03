@@ -3,7 +3,6 @@ package this_team;
 import org.jogamp.java3d.*;
 import org.jogamp.java3d.loaders.Scene;
 import org.jogamp.java3d.loaders.objectfile.ObjectFile;
-import org.jogamp.java3d.utils.geometry.Sphere;
 import org.jogamp.vecmath.*;
 
 import java.io.FileNotFoundException;
@@ -21,7 +20,7 @@ public class GamePiece {
         highlightedApp = MaterialManager.highlight_Appearance(clr);
 
         ObjectFile pawn = new ObjectFile();
-        Scene pawnScene = pawn.load("pawn.obj");
+        Scene pawnScene = pawn.load("./src/resources/pawn.obj");
         BranchGroup pawnGroup = pawnScene.getSceneGroup();
         Shape3D pawnShape = (Shape3D) pawnGroup.getChild(0);
         pawnShape.setCapability(Shape3D.ALLOW_APPEARANCE_WRITE);

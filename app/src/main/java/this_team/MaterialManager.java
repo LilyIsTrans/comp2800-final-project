@@ -1,17 +1,9 @@
 package this_team;
 
-import java.awt.BorderLayout;
-import java.awt.GraphicsConfiguration;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-
 import org.jogamp.java3d.*;
-import org.jogamp.java3d.utils.geometry.ColorCube;
 import org.jogamp.java3d.utils.image.TextureLoader;
 import org.jogamp.java3d.utils.universe.*;
 import org.jogamp.vecmath.*;
-
 
 public class MaterialManager {
 	

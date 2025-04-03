@@ -4,9 +4,7 @@ import org.jogamp.java3d.Alpha;
 import org.jogamp.java3d.PositionPathInterpolator;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
-import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Point3f;
-import org.jogamp.vecmath.Vector3d;
 import org.jogamp.vecmath.Vector3f;
 
 public class ParabolicInterpolator extends PositionPathInterpolator {

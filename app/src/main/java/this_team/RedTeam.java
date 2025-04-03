@@ -1,6 +1,5 @@
 package this_team;
 
-
 import java.io.FileNotFoundException;
 
 public class RedTeam extends PieceLogic {

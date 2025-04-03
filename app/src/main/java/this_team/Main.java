@@ -1,19 +1,16 @@
 package this_team;
 
 import org.jogamp.java3d.*;
-import org.jogamp.java3d.utils.behaviors.keyboard.KeyNavigatorBehavior;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
-import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
 
-public class Main extends JPanel implements KeyListener {
+public class Main extends JPanel implements KeyListener, ActionListener {
   private static final long serialVersionUID = 1L;
   private static JFrame frame;
-  private LudoBoard ludoBoard;
   private Grid grid;
   private GameLogic gameLogic;
   private int selectedPieceIndex = 0;
@@ -58,18 +55,43 @@ public class Main extends JPanel implements KeyListener {
 
     universe.addBranchGraph(scene);
 
-//    cameraBehaviour = new KeyNavigatorBehavior(universe.getViewingPlatform().getViewPlatformTransform());
-//    canvas.addKeyListener(cameraBehaviour);
+    Menu menu = new Menu("Menu");
 
+    MenuItem startGameItem = new MenuItem("Start Game");
+    startGameItem.addActionListener(this);
+    menu.add(startGameItem);
 
+    MenuItem exitItem = new MenuItem("Exit");
+    exitItem.addActionListener(this);
+    menu.add(exitItem);
 
-
+    // Create the MenuBar, add the menu, and set it to the frame
+    MenuBar menuBar = new MenuBar();
+    menuBar.add(menu);
+    frame.setMenuBar(menuBar);
 
     setLayout(new BorderLayout());
     add(canvas, BorderLayout.CENTER);
 
     positionLabel = new JLabel("Begin game - press SPACE to roll");
     add(positionLabel, BorderLayout.SOUTH);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    String chosen_item = e.getActionCommand();	 
+    switch (chosen_item) {
+      case "Exit":
+        System.exit(0);
+        break;
+      case "Start Game":
+        // Start the game logic
+        positionLabel.setText(
+          gameLogic.getCurrentTeam().getTeamName() +
+          "'s turn - press SPACE"
+        );
+        break;
+    }
   }
 
   private BranchGroup createScene() throws FileNotFoundException {
@@ -85,17 +107,20 @@ public class Main extends JPanel implements KeyListener {
 
     Transform3D boardTransform = new Transform3D();
 
-    sceneTG.addChild(LudoGame.create_board(boardTransform));
+    sceneTG.addChild(LudoBoard.create_board(boardTransform));
 
     // 2. Grid
     grid = new Grid();
     sceneTG.addChild(grid.position_Object()); // Z = 0.01
 
     // 3. Initialize teams and add to scene
+    // modify this to work with the menu bar/ team creation
     Team[] teams = {
       new RedTeam(grid.getSize(), grid.getCellSize()),
-      new YellowTeam(grid.getSize(), grid.getCellSize())
+      new YellowTeam(grid.getSize(), grid.getCellSize()),
+      new BlueTeam(grid.getSize(), grid.getCellSize())
     };
+
     gameLogic = new GameLogic(teams);
 
     // Add all teams' TransformGroups
@@ -177,8 +202,6 @@ public class Main extends JPanel implements KeyListener {
     }
   }
 
-
-
   @Override
   public void keyReleased(KeyEvent e) {}
 
@@ -186,12 +209,7 @@ public class Main extends JPanel implements KeyListener {
   public void keyTyped(KeyEvent e) {}
 
   private void setupTopDownCamera() {
-
     universe.getViewingPlatform().setViewPlatformBehavior(camera);
     camera.setEnable(true);
-
-
   }
-
-
 }
