@@ -3,6 +3,7 @@ package this_team;
 import org.jogamp.java3d.*;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
 import org.jogamp.vecmath.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -138,7 +139,10 @@ public class Main extends JPanel implements KeyListener, ActionListener {
             // Initialize game logic
             gameLogic = new GameLogic(selectedTeams);
             gameLogic.resetGame();
-            showGameView();
+            positionLabel.setText(
+              gameLogic.getCurrentTeam().getTeamName() + 
+              "'s turn - press SPACE"
+          );
             
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -147,15 +151,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
                 "Error", 
                 JOptionPane.ERROR_MESSAGE);
         }
-    }
-
-    private void showGameView() {
-        positionLabel.setText(
-            gameLogic.getCurrentTeam().getTeamName() + 
-            "'s turn - press SPACE"
-        );
-        frame.revalidate();
-        frame.repaint();
     }
 
     @Override
@@ -171,8 +166,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
                 break;
         }
     }
-
-    // ... (keep all your existing key listener methods unchanged) ...
 
     @Override
     public void keyPressed(KeyEvent e) {
@@ -192,7 +185,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_SPACE:
                 if (gameLogic.isWaitingForRoll()) {
-                    gameLogic.rollDice();
                     gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
                     gameLogic.handleTurn();
                     gameLogic.getCurrentTeam().highlightPiece(selectedPieceIndex);
@@ -213,48 +205,30 @@ public class Main extends JPanel implements KeyListener, ActionListener {
                 }
                 break;
 
-            case KeyEvent.VK_ENTER:
+                case KeyEvent.VK_ENTER:
                 if (gameLogic.isWaitingForMove()) {
-                    gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
-                    gameLogic.moveSelectedPiece(selectedPieceIndex);
-                    
-                    if (gameLogic.getWinningTeam() != null) {
-                        positionLabel.setText(
-                            gameLogic.getWinningTeam().getTeamName() + 
-                            " WINS THE GAME! Press 'Start Game' to play again"
-                        );
-                        return;
-                    }
-                    
-                    gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
-                    positionLabel.setText(
-                        gameLogic.getCurrentTeam().getTeamName() +
-                        (gameLogic.isWaitingForRoll() ? "'s turn - press SPACE" : " - select piece (1-4)")
-                    );
-                }
+                  gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
+                  gameLogic.moveSelectedPiece(selectedPieceIndex);
+                } 
                 else if (gameLogic.isNoMovesState()) {
-                    gameLogic.forceTurnEnd();
-                    
-                    if (gameLogic.getWinningTeam() != null) {
-                        positionLabel.setText(
-                            gameLogic.getWinningTeam().getTeamName() + 
-                            " WINS THE GAME! Press 'Start Game' to play again"
-                        );
-                        return;
-                    }
-                    
-                    gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
-                    positionLabel.setText(
-                        gameLogic.getCurrentTeam().getTeamName() +
-                        "'s turn - press SPACE"
-                    );
+                  gameLogic.forceTurnEnd();
                 }
-                break;
-
-            case KeyEvent.VK_G:
-                if (grid != null) {
-                    grid.toggleVisibility();
+                
+                // Check if the game has been won in either branch.
+                if (gameLogic.getWinningTeam() != null) {
+                  positionLabel.setText(
+                    gameLogic.getWinningTeam().getTeamName() + 
+                    " WINS THE GAME! Press 'Start Game' to play again"
+                  );
+                  return;
                 }
+                
+                // Refresh UI based on current state.
+                gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
+                positionLabel.setText(
+                  gameLogic.getCurrentTeam().getTeamName() +
+                  (gameLogic.isWaitingForRoll() ? "'s turn - press SPACE" : " - select piece (1-4)")
+                );
                 break;
         }
     }
