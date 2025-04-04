@@ -22,18 +22,25 @@ public class Dice extends BranchGroup {
     private final Random random = new Random();
     private int currentFace;
     
-    // Physics simulation
-    // Position now represents the center of mass.
+    // Physics simulation: position represents the center of mass.
     private Vector3f position = new Vector3f(0, SIZE + TABLE_HEIGHT, 0);
     private Vector3f velocity = new Vector3f();
     private Vector3f angularVelocity = new Vector3f();
     private boolean isRolling = false;
     
-    // Timer for resting contact on table using center-of-mass
-    private long contactStartTime = 0;  // Time when dice first contacts the table with low speeds
+    // Timer for detecting stable contact.
+    private long contactStartTime = 0;
 
-    // Fields used for mouse control
+    // Fields used for mouse control.
     public double startX, startY;
+    
+    // Fields for smooth settling interpolation.
+    private boolean isSettling = false;
+    private Transform3D settleStartTransform = new Transform3D();
+    private Transform3D settleTargetTransform = new Transform3D();
+    private long settleStartTime = 0;
+    private static final long SETTLING_DURATION = 500; // in ms
+
     public Dice() {
         diceTG = new TransformGroup();
         diceTG.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -96,25 +103,32 @@ public class Dice extends BranchGroup {
         return new Shape3D(quad, app);
     }
 
-    // Allows resetting the rolling state
+    // Resets the rolling state.
     public void resetRoll() {
         isRolling = true;
+        isSettling = false;
         contactStartTime = 0;
     }
 
-    // Updated physics update method letting gravity do most of the work.
+    // Physics update method that lets gravity do most of the work.
     public void updatePhysics(float deltaTime) {
+        // If we are already in the smooth settling phase, interpolate the rotation.
+        if (isSettling) {
+            smoothSettle();
+            return;
+        }
+        
         if (!isRolling) return;
         
-        // Apply gravity
+        // Apply gravity.
         velocity.y -= 9.8f * deltaTime;
         
-        // Update linear motion based on center of mass
+        // Update linear motion (center-of-mass).
         position.x += velocity.x * deltaTime;
         position.y += velocity.y * deltaTime;
         position.z += velocity.z * deltaTime;
         
-        // Update rotation using angular velocity
+        // Update rotation using angular velocity.
         Transform3D currentTransform = new Transform3D();
         diceTG.getTransform(currentTransform);
         float angle = angularVelocity.length() * deltaTime;
@@ -127,38 +141,25 @@ public class Dice extends BranchGroup {
             diceTG.setTransform(currentTransform);
         }
         
-        // Soft collision detection using center of mass.
+        // Soft collision detection using center-of-mass.
         float restingCenterY = TABLE_HEIGHT + SIZE;
         if (position.y <= restingCenterY + 0.01f) {
-            // Apply a gentle correction if below the table's resting level
             if (position.y < restingCenterY) {
                 float penetration = restingCenterY - position.y;
-                // Only correct a fraction so gravity continues to have an effect.
-                position.y += penetration * 0.5f;
-                // Soft bounce with low energy.
-                velocity.y = -velocity.y * 0.3f;
-                // Apply friction
+                position.y += penetration * 0.5f; // partial correction
+                velocity.y = -velocity.y * 0.3f;  // soft bounce
                 float frictionFactor = 0.85f;
                 velocity.x *= frictionFactor;
                 velocity.z *= frictionFactor;
-                // Dampen angular velocity
                 angularVelocity.scale(0.8f);
             }
             
-            // Check if the dice is nearly motionless to trigger settling.
+            // Check if the dice is nearly motionless.
             if (velocity.length() < 0.1f && angularVelocity.length() < 0.2f) {
                 if (contactStartTime == 0) {
                     contactStartTime = System.currentTimeMillis();
-                } else if (System.currentTimeMillis() - contactStartTime > 500) { // 0.5 seconds of stability
-                    // Snap center of mass to resting height and zero out velocities.
-                    position.y = restingCenterY;
-                    velocity.set(0, 0, 0);
-                    angularVelocity.set(0, 0, 0);
-                    // Align dice to the closest face (using up vector).
-                    int settledFace = findClosestFaceToVector(new Vector3f(0, 1, 0));
-                    setFace(settledFace);
-                    isRolling = false;
-                    System.out.println("Dice settled on face: " + settledFace);
+                } else if (System.currentTimeMillis() - contactStartTime > 500) {
+                    beginSmoothSettle();
                 }
             } else {
                 contactStartTime = 0;
@@ -167,7 +168,7 @@ public class Dice extends BranchGroup {
             contactStartTime = 0;
         }
         
-        // Boundary checks with damping for table edges
+        // Boundary checks for table edges.
         float tableBound = TABLE_SIZE - SIZE;
         if (Math.abs(position.x) > tableBound) {
             position.x = Math.signum(position.x) * tableBound;
@@ -182,30 +183,89 @@ public class Dice extends BranchGroup {
         
         updatePositionTransform();
     }
-
-    // Modified roll method with controlled initial conditions.
+    
+    // Begins the smooth settling phase.
+    private void beginSmoothSettle() {
+        float restingCenterY = TABLE_HEIGHT + SIZE;
+        position.y = restingCenterY;
+        velocity.set(0, 0, 0);
+        angularVelocity.set(0, 0, 0);
+        
+        int settledFace = findClosestFaceToVector(new Vector3f(0, 1, 0));
+        diceTG.getTransform(settleStartTransform);
+        settleTargetTransform = getFaceTransform(settledFace);
+        
+        settleStartTime = System.currentTimeMillis();
+        isSettling = true;
+        System.out.println("Dice settling on face: " + settledFace);
+    }
+    
+    // Smoothly interpolates between the current and target transforms.
+    private void smoothSettle() {
+        long now = System.currentTimeMillis();
+        float t = (now - settleStartTime) / (float) SETTLING_DURATION;
+        if (t >= 1.0f) {
+            diceTG.setTransform(settleTargetTransform);
+            isSettling = false;
+            isRolling = false;
+        } else {
+            Transform3D interp = new Transform3D();
+            Transform3D temp = new Transform3D(settleStartTransform);
+            temp.mul(1.0 - t);
+            Transform3D temp2 = new Transform3D(settleTargetTransform);
+            temp2.mul(t);
+            interp.add(temp, temp2);
+            diceTG.setTransform(interp);
+        }
+        // Lock the dice's vertical position.
+        position.y = TABLE_HEIGHT + SIZE;
+        updatePositionTransform();
+    }
+    
+    // Returns a transform aligning the specified face upward.
+    private Transform3D getFaceTransform(int faceValue) {
+        Transform3D transform = new Transform3D();
+        transform.setIdentity();
+        switch (faceValue) {
+            case 1:
+                transform.rotX(-Math.PI / 2);
+                break;
+            case 2:
+                transform.rotX(Math.PI / 2);
+                break;
+            case 3:
+                transform.rotZ(-Math.PI / 2);
+                break;
+            case 4:
+                transform.rotZ(Math.PI / 2);
+                break;
+            case 5:
+                // No rotation needed.
+                break;
+            case 6:
+                transform.rotX(Math.PI);
+                break;
+        }
+        return transform;
+    }
+    
+    // Roll method with controlled initial conditions.
     public int roll() {
         isRolling = true;
+        isSettling = false;
         contactStartTime = 0;
         
-        // Random target face (not directly used for physics now)
         int targetFace = random.nextInt(6) + 1;
-        
-        // Start above the table with a random lateral position but a high drop.
         position.set(
             (random.nextFloat() * 2 - 1) * (TABLE_SIZE * 0.5f),
             SIZE + TABLE_HEIGHT + 1.5f,
             (random.nextFloat() * 2 - 1) * (TABLE_SIZE * 0.5f)
         );
-        
-        // Initial velocity with a strong downward component.
         velocity.set(
             (random.nextFloat() * 2 - 1) * 1.5f,
             -2.0f,
             (random.nextFloat() * 2 - 1) * 1.5f
         );
-        
-        // Angular velocity to create a spin.
         angularVelocity.set(
             random.nextFloat() * 8 - 4,
             random.nextFloat() * 8 - 4,
@@ -215,14 +275,14 @@ public class Dice extends BranchGroup {
         return targetFace;
     }
     
-    // Updates the position transform based on the center of mass.
+    // Updates the transform based on the center-of-mass.
     private void updatePositionTransform() {
         Transform3D posTransform = new Transform3D();
         posTransform.setTranslation(position);
         positionTG.setTransform(posTransform);
     }
     
-    // Finds the face whose normal is closest to the given world vector.
+    // Determines which face is most nearly upward.
     private int findClosestFaceToVector(Vector3f worldVec) {
         Transform3D diceTransform = new Transform3D();
         diceTG.getTransform(diceTransform);
@@ -259,35 +319,9 @@ public class Dice extends BranchGroup {
                           axis.x, axis.y, axis.z, angle, Math.toDegrees(angle));
     }
     
-    // Aligns the dice so that the specified face becomes the upward face.
+    // Immediately aligns the dice to the given face.
     public void setFace(int faceValue) {
-        Transform3D transform = new Transform3D();
-        transform.setIdentity();
-        switch (faceValue) {
-            case 1:
-                // Face 1 (front) becomes up by rotating -90° about X.
-                transform.rotX(-Math.PI/2);
-                break;
-            case 2:
-                // Face 2 (back) becomes up by rotating +90° about X.
-                transform.rotX(Math.PI/2);
-                break;
-            case 3:
-                // Face 3 (left) becomes up by rotating -90° about Z.
-                transform.rotZ(-Math.PI/2);
-                break;
-            case 4:
-                // Face 4 (right) becomes up by rotating +90° about Z.
-                transform.rotZ(Math.PI/2);
-                break;
-            case 5:
-                // Face 5 (top) is already up.
-                break;
-            case 6:
-                // Face 6 (bottom) becomes up by rotating 180° about X.
-                transform.rotX(Math.PI);
-                break;
-        }
+        Transform3D transform = getFaceTransform(faceValue);
         diceTG.setTransform(transform);
         currentFace = faceValue;
     }
@@ -327,24 +361,20 @@ public class Dice extends BranchGroup {
         
         SimpleUniverse universe = new SimpleUniverse(canvas);
         
-        // Set up the camera for a top-down view.
         ViewingPlatform viewingPlatform = universe.getViewingPlatform();
         TransformGroup vpGroup = viewingPlatform.getViewPlatformTransform();
         
         Transform3D viewTransform = new Transform3D();
         viewTransform.setTranslation(new Vector3f(0.0f, 5.0f, 0.0f));
-        
         Point3d eye = new Point3d(0.0, 10.0, 0.0);
         Point3d center = new Point3d(0.0, 0.0, 0.0);
         Vector3d up = new Vector3d(0.0, 0.0, -1.0);
         viewTransform.lookAt(eye, center, up);
         viewTransform.invert();
-        
         vpGroup.setTransform(viewTransform);
         
         universe.addBranchGraph(scene);
         
-        // Mouse controls for camera rotation and dice rotation printing.
         canvas.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
                 dice.startX = e.getX();
@@ -374,7 +404,6 @@ public class Dice extends BranchGroup {
             }
         });
         
-        // WASD controls for camera movement.
         canvas.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -404,7 +433,6 @@ public class Dice extends BranchGroup {
         canvas.setFocusable(true);
         canvas.requestFocus();
         
-        // UI panel with buttons to set face, roll, reset view, and test camera angle.
         JPanel panel = new JPanel(new GridLayout(2, 4));
         for (int i = 1; i <= 6; i++) {
             final int face = i;
@@ -434,7 +462,6 @@ public class Dice extends BranchGroup {
         });
         panel.add(resetViewBtn);
         
-        // Test camera angle button.
         JButton testCameraAngleBtn = new JButton("Test Camera Angle");
         testCameraAngleBtn.addActionListener(e -> {
             Transform3D viewTransformTest = new Transform3D();
@@ -449,7 +476,6 @@ public class Dice extends BranchGroup {
         
         frame.add(panel, BorderLayout.SOUTH);
         
-        // Timer to update physics at roughly 60fps.
         Timer physicsTimer = new Timer(16, e -> dice.updatePhysics(0.016f));
         physicsTimer.start();
         
