@@ -250,14 +250,6 @@ private void createGamePanel() {
         break;
 
         case KeyEvent.VK_ENTER:
-        // First check if the game is already won.
-        if (gameLogic.getWinningTeam() != null) {
-          positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
-          // Optionally, disable further input here.
-          return;
-        }
-
-
   
         if (gameLogic.isWaitingForMove()) {
           gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
@@ -265,13 +257,15 @@ private void createGamePanel() {
             SwingUtilities.invokeLater(() -> {
               if (success) {
                 positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " moved! Press ENTER to continue.");
-              } else {
+              } 
+              else {
                 positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " couldn't move! Press ENTER to continue.");
               }
               // After the move, check for win.
               if (gameLogic.getWinningTeam() != null) {
                 positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
-              } else {
+              } 
+              else {
                 gameLogic.handleTurn((Void) -> {
                   if (gameLogic.getWinningTeam() != null) {
                     positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
@@ -283,16 +277,14 @@ private void createGamePanel() {
             });
           });
         } else if (gameLogic.isNoMovesState() || gameLogic.isTurnComplete()) {
-          if (gameLogic.getWinningTeam() != null) {
-            positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
-          } else {
+            if (gameLogic.getWinningTeam() != null) {
+                positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
+              } 
             gameLogic.forceTurnEnd();
             positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn complete - Press SPACE to roll");
-          }
         }
         hasRolled = false; 
         break;
-
     }
   }
 
