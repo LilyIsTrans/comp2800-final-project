@@ -81,21 +81,12 @@ public class GamePiece  {
     
     public void moveTo(float x, float y, float z) {
         //currentTransform.get(oldPos);
-        interp.setEnable(false);
-        interp.setStartEnd(new Alpha(1, 1000), oldPos, new Point3f(x, y, z));
+
+        interp.setStartEnd(new Alpha(-1, (long) ((1.0f - interp.getAlpha().value()) * interp.getAlpha().getIncreasingAlphaDuration()), 100, 1000, 100, 100), oldPos, new Point3f(x, y, z), (float) (2 * Math.PI));
         oldPos = new Point3f(x, y, z);
-        interp.setEnable(true);
-//        Timer beep = new Timer(2000, e -> this.interp.setStartEnd(new Alpha(-1, 1000), this.oldPos, this.oldPos));
-//        beep.setRepeats(false);
-//        beep.start();
 
 
 
-
-
-        //Vector3f pos = new Vector3f(x, y, z);
-        //transform.setTranslation(pos);
-        //pieceTG.setTransform(transform);
         System.out.println("GamePiece moved to: (" + x + ", " + y + ", " + z + ")");
 
     }

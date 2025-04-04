@@ -1,10 +1,7 @@
 package this_team;
 
 import org.jogamp.java3d.*;
-import org.jogamp.vecmath.Point3d;
-import org.jogamp.vecmath.Point3f;
-import org.jogamp.vecmath.Quat4f;
-import org.jogamp.vecmath.Vector3f;
+import org.jogamp.vecmath.*;
 
 import java.util.Iterator;
 
@@ -45,7 +42,7 @@ public class ParabolicInterpolator extends RotPosScalePathInterpolator {
         return new ParabolicInterpolator(alpha, target, axisOfTransform, knots, positions, rots, scales);
     }
 
-    public void setStartEnd(Alpha alpha, Point3f start, Point3f end) {
+    public void setStartEnd(Alpha alpha, Point3f start, Point3f end, float fun) {
         float[] knots = new float[steps];
         Point3f[] positions = new Point3f[steps];
         Point3f middle = new Point3f(start);
@@ -53,17 +50,23 @@ public class ParabolicInterpolator extends RotPosScalePathInterpolator {
         middle.scale(0.5f);
         middle.add(new Vector3f(0, 0, 1));
 
+        Quat4f[] rots = new Quat4f[knots.length];
+        float[] scales = new float[knots.length];
+
+
         for (int i = 0; i < steps; ++i) {
             knots[i] = (float)i / (steps - 1);
             positions[i] = f(knots[i], start, end, middle);
+
+            rots[i] = new Quat4f();
+            Quat4f temp = new Quat4f();
+            temp.set(new AxisAngle4f(new Vector3f( 0, 1, 0 ), fun));
+            rots[i].interpolate(rot, temp, positions[i].z);
+
+            scales[i] = scale * (positions[i].z) + scale;
         }
 
-        Quat4f[] rots = new Quat4f[knots.length];
-        float[] scales = new float[knots.length];
-        for (int i = 0; i < knots.length; ++i) {
-            rots[i] = new Quat4f(rot);
-            scales[i] = scale;
-        }
+
         this.setPathArrays(knots, rots, positions, scales);
         this.setAlpha(alpha);
 
@@ -90,11 +93,11 @@ public class ParabolicInterpolator extends RotPosScalePathInterpolator {
     @Override
     public void processStimulus(Iterator<WakeupCriterion> criteria) {
         super.processStimulus(criteria);
-        if (this.getAlpha().finished()) {
-            System.err.println(this.getAlpha().getLoopCount());
+        if ( Math.abs(this.getAlpha().value() - 1.0f) < 0.01f) {
+
             Point3f end = new Point3f();
             this.getPosition(steps - 1, end);
-            this.setStartEnd(new Alpha(-1, 1000), end, end);
+            this.setStartEnd(new Alpha(-1, 1000), end, end, 0);
 
             this.wakeupOn(this.defaultWakeupCriterion);
         }
