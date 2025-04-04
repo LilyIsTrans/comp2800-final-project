@@ -69,7 +69,7 @@ public class DiceRollWrapper extends JDialog {
         scene = new BranchGroup();
         
         // Background.
-        Background bg = new Background(new Color3f(0.2f, 0.2f, 0.4f));
+        Background bg = new Background(new Color3f(1.0f, 1.0f, 1.0f));
         bg.setApplicationBounds(new BoundingSphere(new Point3d(), 100));
         scene.addChild(bg);
         
@@ -82,11 +82,11 @@ public class DiceRollWrapper extends JDialog {
         // Create the table (using the same dimensions as in Dice.java).
         Appearance tableApp = new Appearance();
         tableApp.setMaterial(new Material(
-            new Color3f(0.6f, 0.3f, 0.0f),
-            new Color3f(0, 0, 0),
-            new Color3f(0.6f, 0.3f, 0.0f),
-            new Color3f(0, 0, 0),
-            80.0f
+            new Color3f(0.4f, 0.2f, 0.1f),  // Diffuse color: darker brown.
+            new Color3f(0, 0, 0),            // Ambient color.
+            new Color3f(0.4f, 0.2f, 0.1f),    // Specular color.
+            new Color3f(0, 0, 0),            // Emissive color.
+            80.0f                          // Shininess.
         ));
         Box table = new Box(Dice.TABLE_SIZE, Dice.TABLE_HEIGHT, Dice.TABLE_SIZE, tableApp);
         scene.addChild(table);

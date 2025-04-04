@@ -335,8 +335,6 @@ public class Dice extends BranchGroup {
         diceTG.setTransform(transform);
         currentFace = faceValue;
     }
-
-    
     
     // Simulation method remains unchanged.
     public void simulate() {
@@ -369,7 +367,7 @@ public class Dice extends BranchGroup {
         
         BranchGroup scene = new BranchGroup();
         
-        Background bg = new Background(new Color3f(0.2f, 0.2f, 0.4f));
+        Background bg = new Background(new Color3f(0.0f, 0.0f, 0.0f));
         bg.setApplicationBounds(new BoundingSphere(new Point3d(), 100));
         scene.addChild(bg);
         

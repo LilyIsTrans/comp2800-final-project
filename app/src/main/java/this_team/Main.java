@@ -22,7 +22,12 @@ public class Main extends JPanel implements KeyListener, ActionListener {
   private Team[] selectedTeams;
   private BranchGroup scene;
   private TransformGroup sceneTG;
-  private DiceRollWrapper diceRollWrapper; // Add this field
+  private DiceRollWrapper diceRollWrapper;
+
+  // CardLayout for view switching
+  private CardLayout cardLayout;
+  private HomeScreen homeScreen;  // Using the external HomeScreen class
+  private JPanel gamePanel;
 
   public static void main(String[] args) throws FileNotFoundException {
     SwingUtilities.invokeLater(() -> {
@@ -30,12 +35,44 @@ public class Main extends JPanel implements KeyListener, ActionListener {
     });
   }
 
-  // ALL YOUR EXISTING CODE BELOW - NOTHING CHANGED
+  // Constructor - now creates a CardLayout with HomeScreen and Game view.
   public Main(JFrame frame) throws FileNotFoundException {
-    Main.frame = frame; 
+    Main.frame = frame;
+    cardLayout = new CardLayout();
+    setLayout(cardLayout);
+
+    // Create and add the home screen.
+    homeScreen = new HomeScreen();
+    // Attach listener for the "New Game" button on the home screen.
+    homeScreen.addNewGameListener(e -> {
+      // Open team selection dialog which will eventually call startGameWithTeams(...)
+      TeamSelectionDialog dialog = new TeamSelectionDialog(frame, this);
+      dialog.setVisible(true);
+    });
+    add(homeScreen, "home");
+
+    // Create the game panel.
+    createGamePanel();
+
+    // Initially show the home screen.
+    cardLayout.show(this, "home");
+
+    // Initialize common components for the game view.
     initialize3DScene();
-    initializeUI();
     initializeMenu();
+  }
+
+  private void createGamePanel() {
+    gamePanel = new JPanel(new BorderLayout());
+    positionLabel = new JLabel("Press 'New Game' to begin");
+    positionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    positionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    // Set text color to white and background to black.
+    positionLabel.setForeground(Color.WHITE);
+    positionLabel.setOpaque(true);
+    positionLabel.setBackground(Color.BLACK);
+    gamePanel.add(positionLabel, BorderLayout.SOUTH);
+    add(gamePanel, "game");
   }
 
   private void initialize3DScene() throws FileNotFoundException {
@@ -55,19 +92,9 @@ public class Main extends JPanel implements KeyListener, ActionListener {
     universe = new SimpleUniverse(canvas);
     camera.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), Double.POSITIVE_INFINITY));
     setupTopDownCamera();
-  }
 
-  private void initializeUI() {
-    setLayout(new BorderLayout());
-    add(canvas, BorderLayout.CENTER);
-    
-    positionLabel = new JLabel("Press 'New Game' to begin");
-    // Set the label to be centered horizontally
-    positionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    // Increase font size and set style to bold
-    positionLabel.setFont(new Font("Arial", Font.BOLD, 18));
-    
-    add(positionLabel, BorderLayout.SOUTH);
+    // Add the canvas to the center of the game panel.
+    gamePanel.add(canvas, BorderLayout.CENTER);
   }
 
   private void initializeMenu() {
@@ -85,6 +112,7 @@ public class Main extends JPanel implements KeyListener, ActionListener {
     frame.setMenuBar(menuBar);
   }
 
+  // Called by TeamSelectionDialog to start the game.
   public void startGameWithTeams(int teamCount, String[] selectedColors) {
     try {
       if (scene != null) {
@@ -140,9 +168,8 @@ public class Main extends JPanel implements KeyListener, ActionListener {
       int diceWindowWidth = 500;
       int diceWindowHeight = 400;
 
-      // Position at top-right corner, with some padding
-      int xPosition = screenSize.width - diceWindowWidth - 20; // 20 pixels from right edge
-      int yPosition = 20; // 20 pixels from top edge
+      int xPosition = screenSize.width - diceWindowWidth - 20;
+      int yPosition = 20;
 
       diceRollWrapper.setSize(diceWindowWidth, diceWindowHeight);
       diceRollWrapper.setLocation(xPosition, yPosition);
@@ -150,19 +177,20 @@ public class Main extends JPanel implements KeyListener, ActionListener {
       diceRollWrapper.setFocusable(true);
 
       gameLogic = new GameLogic(diceRollWrapper, selectedTeams);
-
       gameLogic.resetGame();
       positionLabel.setText(
-        gameLogic.getCurrentTeam().getTeamName() + 
-        "'s turn - press SPACE"
+        gameLogic.getCurrentTeam().getTeamName() + "'s turn - press SPACE"
       );
+
+      // Switch to game view.
+      cardLayout.show(this, "game");
 
     } catch (FileNotFoundException e) {
       e.printStackTrace();
-      JOptionPane.showMessageDialog(frame, 
-        "Error loading team resources", 
-        "Error", 
-        JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(frame,
+          "Error loading team resources",
+          "Error",
+          JOptionPane.ERROR_MESSAGE);
     }
   }
 
@@ -174,6 +202,7 @@ public class Main extends JPanel implements KeyListener, ActionListener {
         System.exit(0);
         break;
       case "New Game":
+        // Open team selection dialog when New Game is selected from the menu.
         TeamSelectionDialog dialog = new TeamSelectionDialog(frame, this);
         dialog.setVisible(true);
         break;
@@ -199,7 +228,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
       case KeyEvent.VK_SPACE:
         if (gameLogic.isWaitingForRoll()) {
           positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " rolling...");
-
           gameLogic.handleTurn((Void) -> SwingUtilities.invokeLater(() -> {
             if (gameLogic.isNoMovesState()) {
               positionLabel.setText(
@@ -221,7 +249,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
       case KeyEvent.VK_ENTER:
         if (gameLogic.isWaitingForMove()) {
           gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
-
           gameLogic.moveSelectedPiece(selectedPieceIndex, success -> {
             SwingUtilities.invokeLater(() -> {
               if (success) {
@@ -229,7 +256,6 @@ public class Main extends JPanel implements KeyListener, ActionListener {
               } else {
                 positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " couldn't move! Press ENTER to continue.");
               }
-
               // Automatically handle turn completion after move
               gameLogic.handleTurn((Void) -> {
                 if (gameLogic.getWinningTeam() != null) {
