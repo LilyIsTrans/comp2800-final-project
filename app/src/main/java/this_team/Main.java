@@ -136,19 +136,19 @@ private void createGamePanel() {
       for (int i = 0; i < teamCount; i++) {
         switch (selectedColors[i]) {
           case "Red":
-            selectedTeams[i] = new RedTeam(grid.getSize(), grid.getCellSize());
+            selectedTeams[i] = new RedTeam(grid.getSize(), grid.getCellSize(), boardTransform, newScene);
             break;
           case "Yellow":
-            selectedTeams[i] = new YellowTeam(grid.getSize(), grid.getCellSize());
+            selectedTeams[i] = new YellowTeam(grid.getSize(), grid.getCellSize(), boardTransform, newScene);
             break;
           case "Blue":
-            selectedTeams[i] = new BlueTeam(grid.getSize(), grid.getCellSize());
+            selectedTeams[i] = new BlueTeam(grid.getSize(), grid.getCellSize(), boardTransform, newScene);
             break;
           case "Green":
-            selectedTeams[i] = new GreenTeam(grid.getSize(), grid.getCellSize());
+            selectedTeams[i] = new GreenTeam(grid.getSize(), grid.getCellSize(), boardTransform, newScene);
             break;
           default:
-            selectedTeams[i] = new RedTeam(grid.getSize(), grid.getCellSize());
+            selectedTeams[i] = new RedTeam(grid.getSize(), grid.getCellSize(), boardTransform, newScene);
         }
         newSceneTG.addChild(selectedTeams[i].getTransformGroup());
       }

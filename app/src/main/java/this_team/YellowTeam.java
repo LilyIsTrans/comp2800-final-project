@@ -1,11 +1,14 @@
 package this_team;
 
 
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Transform3D;
+
 import java.io.FileNotFoundException;
 
 public class YellowTeam extends PieceLogic {
-    public YellowTeam(float gridSize, float cellSize) throws FileNotFoundException {
-        super(gridSize, cellSize, "Yellow", TeamConfig.Yellow.COLOR);
+    public YellowTeam(float gridSize, float cellSize, Transform3D rootTransform, BranchGroup sceneBG) throws FileNotFoundException {
+        super(gridSize, cellSize, "Yellow", TeamConfig.Yellow.COLOR, rootTransform, sceneBG);
     }
 
     @Override

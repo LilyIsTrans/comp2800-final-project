@@ -1,5 +1,7 @@
 package this_team;
 
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.vecmath.Color3f;
 
@@ -13,17 +15,21 @@ public abstract class PieceLogic implements Team {
     protected final float cellSize;
     protected final String teamName;
     protected final Color3f teamColor;
+    private Transform3D rootTransform;
+    private BranchGroup sceneBG;
     
     // ===== NEW: Win condition tracking =====
     protected final boolean[] finishedPieces = new boolean[4]; // Tracks which pieces reached the end
 
     
 
-    public PieceLogic(float gridSize, float cellSize, String teamName, Color3f teamColor) throws FileNotFoundException {
+    public PieceLogic(float gridSize, float cellSize, String teamName, Color3f teamColor, Transform3D rootTransform, BranchGroup sceneBG) throws FileNotFoundException {
         this.gridSize = gridSize;
         this.cellSize = cellSize;
         this.teamName = teamName;
         this.teamColor = teamColor;
+        this.rootTransform = rootTransform;
+        this.sceneBG = sceneBG;
         initializePieces();
     }
 
@@ -135,7 +141,7 @@ public abstract class PieceLogic implements Team {
     // === Initialization ===
     private void initializePieces() throws FileNotFoundException {
         for (int i = 0; i < 4; i++) {
-            pieces[i] = new GamePiece(cellSize, teamColor);
+            pieces[i] = new GamePiece(cellSize, teamColor, rootTransform, sceneBG);
             placeAtHomePosition(i);
             finishedPieces[i] = false; // NEW: Initialize all pieces as not finished
         }
