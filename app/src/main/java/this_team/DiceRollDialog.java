@@ -1,141 +1,132 @@
 package this_team;
 
 import org.jogamp.java3d.*;
-import org.jogamp.java3d.utils.behaviors.vp.OrbitBehavior;
 import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.*;
-
+import org.jogamp.java3d.utils.geometry.Box;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-// public class DiceRollDialog extends JDialog {
-//     private Canvas3D canvas;
-//     private SimpleUniverse universe;
-//     private Dice dice;
-//     private TransformGroup diceTG;
-//     private RotationInterpolator rotator;
-//     private Alpha rollAlpha;
-//     private int forcedFaceValue = -1;
+public class DiceRollDialog extends JDialog {
+    // Scene components
+    private Canvas3D canvas;
+    private SimpleUniverse universe;
+    private BranchGroup scene;
+    private Dice dice;
+    private Timer physicsTimer; // Timer for updating dice physics
     
-//     public DiceRollDialog(Frame owner) {
-//         super(owner, "Dice Roll", true);
-//         initComponents();
-//         setupTestControls();
-//     }
+    public DiceRollDialog(Frame owner) {
+        super(owner, "3D Dice Roll", true);
+        initComponents();
+    }
     
-//     private void initComponents() {
-//         GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
-//         canvas = new Canvas3D(config);
-//         getContentPane().setLayout(new BorderLayout());
-//         getContentPane().add(canvas, BorderLayout.CENTER);
+    private void initComponents() {
+        // Create and add the Canvas3D
+        GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+        canvas = new Canvas3D(config);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(canvas, BorderLayout.CENTER);
         
-//         universe = new SimpleUniverse(canvas);
+        // Create a SimpleUniverse with the canvas
+        universe = new SimpleUniverse(canvas);
         
-//         OrbitBehavior orbit = new OrbitBehavior(canvas, OrbitBehavior.REVERSE_ALL);
-//         orbit.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 100.0));
-//         universe.getViewingPlatform().setViewPlatformBehavior(orbit);
+        // Create the scene (similar to Dice.java main)
+        scene = new BranchGroup();
         
-//         BranchGroup rootBranchGroup = new BranchGroup();
-//         rootBranchGroup.setCapability(BranchGroup.ALLOW_DETACH);
+        // Add background
+        Background bg = new Background(new Color3f(0.2f, 0.2f, 0.4f));
+        bg.setApplicationBounds(new BoundingSphere(new Point3d(), 100));
+        scene.addChild(bg);
         
-//         Background bg = new Background(new Color3f(1f, 1f, 1f));
-//         bg.setApplicationBounds(new BoundingSphere(new Point3d(0, 0, 0), 100.0));
-//         rootBranchGroup.addChild(bg);
+        // Add directional light
+        DirectionalLight light = new DirectionalLight(
+            new Color3f(1f, 1f, 1f), new Vector3f(-1f, -1f, -1f));
+        light.setInfluencingBounds(new BoundingSphere(new Point3d(), 100));
+        scene.addChild(light);
         
-//         dice = new Dice(0.5f);
-//         diceTG = dice.getTransformGroup();
+        // Create the table (using same dimensions as Dice.java)
+        Appearance tableApp = new Appearance();
+        tableApp.setMaterial(new Material(
+            new Color3f(0.6f, 0.3f, 0.0f),
+            new Color3f(0, 0, 0),
+            new Color3f(0.6f, 0.3f, 0.0f),
+            new Color3f(0, 0, 0),
+            80.0f
+        ));
+        Box table = new Box(Dice.TABLE_SIZE, Dice.TABLE_HEIGHT, Dice.TABLE_SIZE, tableApp);
+        scene.addChild(table);
         
-//         TransformGroup diceHolder = new TransformGroup();
-//         diceHolder.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-//         diceHolder.addChild(dice);
+        // Create the dice instance and add it to the scene.
+        dice = new Dice();
+        scene.addChild(dice);
         
-//         rootBranchGroup.addChild(diceHolder);
+        // Setup the viewing platform (camera) as in Dice.java main.
+        ViewingPlatform viewingPlatform = universe.getViewingPlatform();
+        TransformGroup vpGroup = viewingPlatform.getViewPlatformTransform();
+        Transform3D viewTransform = new Transform3D();
+        viewTransform.setTranslation(new Vector3f(0.0f, 5.0f, 0.0f));
+        Point3d eye = new Point3d(0.0, 25.0, 0.0);
+        Point3d center = new Point3d(0.0, 0.0, 0.0);
+        Vector3d up = new Vector3d(0.0, 0.0, -1.0);
+        viewTransform.lookAt(eye, center, up);
+        viewTransform.invert();
+        vpGroup.setTransform(viewTransform);
         
-//         rollAlpha = new Alpha(-1, 2000);
-//         rotator = new RotationInterpolator(rollAlpha, diceTG);
-//         rotator.setSchedulingBounds(new BoundingSphere(new Point3d(0, 0, 0), 100.0));
+        // Add the scene to the universe.
+        universe.addBranchGraph(scene);
         
-//         dice.addChild(rotator);
+        // Create a control panel with only a "Roll Dice" button.
+        JPanel controlPanel = new JPanel(new FlowLayout());
+        JButton rollBtn = new JButton("Roll Dice");
+        rollBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dice.resetRoll();
+                int result = dice.roll();
+                System.out.println("Roll initiated; final face will be: " + result);
+            }
+        });
+        controlPanel.add(rollBtn);
+        getContentPane().add(controlPanel, BorderLayout.SOUTH);
         
-//         rootBranchGroup.compile();
-//         universe.addBranchGraph(rootBranchGroup);
-//         universe.getViewingPlatform().setNominalViewingTransform();
+        // Create a timer that calls updatePhysics on the dice every 16 ms.
+        physicsTimer = new Timer(16, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dice.updatePhysics(0.016f);
+            }
+        });
+        physicsTimer.start();
         
-//         setSize(500, 500);
-//         setLocationRelativeTo(getOwner());
-//         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-//     }
+        // Set the dialog properties.
+        setSize(800, 600);
+        setLocationRelativeTo(getOwner());
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+    }
     
-//     private void setupTestControls() {
-//         JPanel controlPanel = new JPanel(new GridLayout(1, 0));
-        
-//         for (int i = 1; i <= 6; i++) {
-//             JButton btn = new JButton("Roll " + i);
-//             final int face = i;
-//             btn.addActionListener(e -> rollSpecificFace(face));
-//             controlPanel.add(btn);
-//         }
-        
-//         JButton randomBtn = new JButton("Random Roll");
-//         randomBtn.addActionListener(e -> rollRandom());
-//         controlPanel.add(randomBtn);
-        
-//         JButton spaceBtn = new JButton("SPACE Key Test");
-//         spaceBtn.addActionListener(e -> simulateSpacePress());
-//         controlPanel.add(spaceBtn);
-        
-//         getContentPane().add(controlPanel, BorderLayout.SOUTH);
-//     }
-    
-//     public void rollSpecificFace(int face) {
-//         setForcedFaceValue(face);
-//         startRoll();
-//     }
-    
-//     public void rollRandom() {
-//         setForcedFaceValue(-1);
-//         startRoll();
-//     }
-    
-//     public void simulateSpacePress() {
-//         int randomFace = (Math.random() < 0.2) ? 6 : (int)(Math.random() * 5) + 1;
-//         rollSpecificFace(randomFace);
-//         System.out.println("SPACE pressed - rolled: " + randomFace);
-//     }
-    
-//     private void startRoll() {
-//         if (forcedFaceValue > 0) {
-//             Transform3D randomRotation = new Transform3D();
-//             randomRotation.rotX(Math.random() * Math.PI * 2);
-//             randomRotation.rotY(Math.random() * Math.PI * 2);
-//             randomRotation.rotZ(Math.random() * Math.PI * 2);
-//             diceTG.setTransform(randomRotation);
-//         }
-//         rollAlpha.setStartTime(System.currentTimeMillis());
-//     }
-    
-//     public void setForcedFaceValue(int faceValue) {
-//         this.forcedFaceValue = faceValue;
-//         if (faceValue > 0) {
-//             dice.setFace(faceValue);
-//         }
-//     }
-    
-    
-//     public static void main(String[] args) {
-//         SwingUtilities.invokeLater(() -> {
-//             JFrame testFrame = new JFrame("Dice Roll Tester");
-//             testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//             testFrame.setSize(300, 100);
-            
-//             JButton launchBtn = new JButton("Open Dice Tester");
-//             launchBtn.addActionListener(e -> {
-//                 DiceRollDialog tester = new DiceRollDialog(testFrame);
-//                 tester.setVisible(true);
-//             });
-            
-//             testFrame.add(launchBtn);
-//             testFrame.setVisible(true);
-//         });
-//     }
-// }
+    public static void main(String[] args) {
+        // Launch the DiceRollDialog from a test frame.
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                JFrame testFrame = new JFrame("Dice Roll Tester");
+                testFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                testFrame.setSize(300, 100);
+                JButton launchBtn = new JButton("Open Dice Roller");
+                launchBtn.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        DiceRollDialog dialog = new DiceRollDialog(testFrame);
+                        dialog.setVisible(true);
+                    }
+                });
+                testFrame.getContentPane().setLayout(new FlowLayout());
+                testFrame.getContentPane().add(launchBtn);
+                testFrame.setLocationRelativeTo(null);
+                testFrame.setVisible(true);
+            }
+        });
+    }
+}

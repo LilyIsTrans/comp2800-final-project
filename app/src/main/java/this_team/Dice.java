@@ -14,8 +14,9 @@ import java.util.Random;
 
 public class Dice extends BranchGroup {
     private static final float SIZE = 0.8f;
-    private static final float TABLE_HEIGHT = 0.05f;
-    private static final float TABLE_SIZE = 2.0f;
+    static final float TABLE_HEIGHT = 0.f;
+    // Table size increased by 70%
+    static final float TABLE_SIZE = 5.0f;
     // Settling duration is now 500 ms (half the previous duration)
     private static final long SETTLING_DURATION = 500; 
 
@@ -28,11 +29,11 @@ public class Dice extends BranchGroup {
     private Vector3f velocity = new Vector3f();
     private Vector3f angularVelocity = new Vector3f();
     private boolean isRolling = false;
-    private long contactStartTime = 0;
     
     // For smooth settling
     private boolean isSettling = false;
     private Transform3D settleStartTransform = new Transform3D();
+    private long contactStartTime = 0;
     private Transform3D settleTargetTransform = new Transform3D();
     private long settleStartTime = 0;
     private Vector3f settleAxis = new Vector3f();
@@ -217,7 +218,8 @@ public class Dice extends BranchGroup {
         velocity.set(0, 0, 0);
         angularVelocity.set(0, 0, 0);
         
-        int settledFace = findClosestFaceToVector(new Vector3f(0, 1, 0));
+        currentFace = findClosestFaceToVector(new Vector3f(0, 1, 0));
+        int settledFace = currentFace;
         diceTG.getTransform(settleStartTransform);
         settleTargetTransform = getFaceTransform(settledFace);
         
@@ -405,7 +407,7 @@ public class Dice extends BranchGroup {
         Transform3D viewTransform = new Transform3D();
         viewTransform.setTranslation(new Vector3f(0.0f, 5.0f, 0.0f));
         
-        Point3d eye = new Point3d(0.0, 10.0, 0.0);
+        Point3d eye = new Point3d(0.0, 25.0, 0.0);
         Point3d center = new Point3d(0.0, 0.0, 0.0);
         Vector3d up = new Vector3d(0.0, 0.0, -1.0);
         viewTransform.lookAt(eye, center, up);
@@ -502,7 +504,7 @@ public class Dice extends BranchGroup {
         resetViewBtn.addActionListener(e -> {
             Transform3D viewTransformReset = new Transform3D();
             viewTransformReset.setTranslation(new Vector3f(0.0f, 5.0f, 0.0f));
-            Point3d eyeReset = new Point3d(0.0, 10.0, 0.0);
+            Point3d eyeReset = new Point3d(0.0, 25.0, 0.0);
             Point3d centerReset = new Point3d(0.0, 0.0, 0.0);
             Vector3d upReset = new Vector3d(0.0, 0.0, -1.0);
             viewTransformReset.lookAt(eyeReset, centerReset, upReset);
@@ -514,7 +516,7 @@ public class Dice extends BranchGroup {
         JButton testCameraAngleBtn = new JButton("Test Camera Angle");
         testCameraAngleBtn.addActionListener(e -> {
             Transform3D viewTransformTest = new Transform3D();
-            Point3d eyeReset = new Point3d(0.0, 0.0, 10.0);
+            Point3d eyeReset = new Point3d(0.0, 0.0, 25.0);
             Point3d centerReset = new Point3d(0.0, 0.0, 0.0);
             Vector3d upReset = new Vector3d(0.0, 1.0, 0.0);
             viewTransformTest.lookAt(eyeReset, centerReset, upReset);
