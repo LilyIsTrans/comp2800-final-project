@@ -89,24 +89,6 @@ public class GameLogic {
     return false;
   }
 
-  private boolean isAtHome(Team team, int pieceIndex) {
-    float[] home = getHomePositions(team)[pieceIndex];
-    return team.getCurrentRow(pieceIndex) == (int) home[0] &&
-           team.getCurrentCol(pieceIndex) == (int) home[1];
-  }
-  private float[][] getHomePositions(Team team) {
-    if (team instanceof RedTeam) {
-      return TeamConfig.Red.HOME_POSITIONS;
-    } else if (team instanceof YellowTeam) {
-      return TeamConfig.Yellow.HOME_POSITIONS;
-    } else if (team instanceof BlueTeam) {
-      return TeamConfig.Blue.HOME_POSITIONS;
-    } else if (team instanceof GreenTeam) {
-      return TeamConfig.Green.HOME_POSITIONS;
-    }
-  
-    throw new IllegalArgumentException("Unknown team type");
-  }
   
 
   public void moveSelectedPiece(int pieceIndex, Consumer<Boolean> callback) {
@@ -121,7 +103,7 @@ public class GameLogic {
     int currentPiece = pieceIndex;
 
     while (attempts < 4) {
-        if (hasRolledSix && isAtHome(currentTeam, currentPiece)) {
+        if (hasRolledSix && currentTeam.isAtHome(currentPiece)) {
             currentTeam.moveToStart(currentPiece);
             System.out.println("Moved from home to start");
             turnState = TurnState.TURN_COMPLETE;
@@ -223,6 +205,12 @@ public class GameLogic {
     return pieces;
   }
 
+    // Add this method to the GameLogic class
+  public boolean isTurnComplete() {
+    // Implement logic to determine if the turn is complete
+    return turnState == TurnState.TURN_COMPLETE; // Check if the turn is complete
+  }
+
   public Team getCurrentTeam() {
     return teams[currentTeamIndex];
   }
@@ -275,11 +263,6 @@ public class GameLogic {
     }
     return false;
   }
-
-  public boolean isTurnComplete() {
-    return turnState == TurnState.TURN_COMPLETE;
-}
-
 }
 
 

@@ -31,4 +31,5 @@ public class BlueTeam extends PieceLogic {
             placeAtHomePosition(i); // Reuse existing method
         }
     }
+    
 }
