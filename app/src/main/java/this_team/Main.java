@@ -21,6 +21,7 @@ public class Main extends JPanel implements KeyListener, ActionListener {
   private Camera camera;
   private Team[] selectedTeams;
   private BranchGroup scene;
+  private boolean hasRolled = false;
   private TransformGroup sceneTG;
   private DiceRollWrapper diceRollWrapper;
 
@@ -62,18 +63,18 @@ public class Main extends JPanel implements KeyListener, ActionListener {
     initializeMenu();
   }
 
-  private void createGamePanel() {
-    gamePanel = new JPanel(new BorderLayout());
-    positionLabel = new JLabel("Press 'New Game' to begin");
-    positionLabel.setHorizontalAlignment(SwingConstants.CENTER);
-    positionLabel.setFont(new Font("Arial", Font.BOLD, 18));
-    // Set text color to white and background to black.
-    positionLabel.setForeground(Color.WHITE);
-    positionLabel.setOpaque(true);
-    positionLabel.setBackground(Color.BLACK);
-    gamePanel.add(positionLabel, BorderLayout.SOUTH);
-    add(gamePanel, "game");
-  }
+private void createGamePanel() {
+  gamePanel = new JPanel(new BorderLayout());
+  positionLabel = new JLabel("Press 'New Game' to begin");
+  positionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+  positionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+  // Set text color to white and background to black.
+  positionLabel.setForeground(Color.WHITE);
+  positionLabel.setOpaque(true);
+  positionLabel.setBackground(Color.BLACK);
+  gamePanel.add(positionLabel, BorderLayout.SOUTH);
+  add(gamePanel, "game");
+}
 
   private void initialize3DScene() throws FileNotFoundException {
     GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
@@ -225,8 +226,10 @@ public class Main extends JPanel implements KeyListener, ActionListener {
     }
 
     switch (e.getKeyCode()) {
-      case KeyEvent.VK_SPACE:
-        if (gameLogic.isWaitingForRoll()) {
+        case KeyEvent.VK_SPACE:
+        // Only allow a roll if the game is waiting for a roll and we haven't rolled yet this turn.
+        if (gameLogic.isWaitingForRoll() && !hasRolled) {
+          hasRolled = true; // Mark that we've rolled this turn.
           positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " rolling...");
           gameLogic.handleTurn((Void) -> SwingUtilities.invokeLater(() -> {
             if (gameLogic.isNoMovesState()) {
@@ -246,7 +249,16 @@ public class Main extends JPanel implements KeyListener, ActionListener {
         }
         break;
 
-      case KeyEvent.VK_ENTER:
+        case KeyEvent.VK_ENTER:
+        // First check if the game is already won.
+        if (gameLogic.getWinningTeam() != null) {
+          positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
+          // Optionally, disable further input here.
+          return;
+        }
+
+
+  
         if (gameLogic.isWaitingForMove()) {
           gameLogic.getCurrentTeam().unhighlightPiece(selectedPieceIndex);
           gameLogic.moveSelectedPiece(selectedPieceIndex, success -> {
@@ -256,21 +268,31 @@ public class Main extends JPanel implements KeyListener, ActionListener {
               } else {
                 positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + " couldn't move! Press ENTER to continue.");
               }
-              // Automatically handle turn completion after move
-              gameLogic.handleTurn((Void) -> {
-                if (gameLogic.getWinningTeam() != null) {
-                  positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
-                } else if (gameLogic.isWaitingForRoll()) {
-                  positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn - press SPACE");
-                }
-              });
+              // After the move, check for win.
+              if (gameLogic.getWinningTeam() != null) {
+                positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
+              } else {
+                gameLogic.handleTurn((Void) -> {
+                  if (gameLogic.getWinningTeam() != null) {
+                    positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
+                  } else if (gameLogic.isWaitingForRoll()) {
+                    positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn - press SPACE");
+                  }
+                });
+              }
             });
           });
         } else if (gameLogic.isNoMovesState() || gameLogic.isTurnComplete()) {
-          gameLogic.forceTurnEnd();
-          positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn complete - Press SPACE to roll");
+          if (gameLogic.getWinningTeam() != null) {
+            positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
+          } else {
+            gameLogic.forceTurnEnd();
+            positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn complete - Press SPACE to roll");
+          }
         }
+        hasRolled = false; 
         break;
+
     }
   }
 
