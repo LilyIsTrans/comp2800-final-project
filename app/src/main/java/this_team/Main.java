@@ -60,13 +60,19 @@ public class Main extends JPanel implements KeyListener, ActionListener {
   private void initializeUI() {
     setLayout(new BorderLayout());
     add(canvas, BorderLayout.CENTER);
-    positionLabel = new JLabel("Press 'Start Game' to begin");
+    
+    positionLabel = new JLabel("Press 'New Game' to begin");
+    // Set the label to be centered horizontally
+    positionLabel.setHorizontalAlignment(SwingConstants.CENTER);
+    // Increase font size and set style to bold
+    positionLabel.setFont(new Font("Arial", Font.BOLD, 18));
+    
     add(positionLabel, BorderLayout.SOUTH);
   }
 
   private void initializeMenu() {
     Menu menu = new Menu("Menu");
-    MenuItem startGameItem = new MenuItem("Start Game");
+    MenuItem startGameItem = new MenuItem("New Game");
     startGameItem.addActionListener(this);
     menu.add(startGameItem);
 
@@ -167,7 +173,7 @@ public class Main extends JPanel implements KeyListener, ActionListener {
       case "Exit":
         System.exit(0);
         break;
-      case "Start Game":
+      case "New Game":
         TeamSelectionDialog dialog = new TeamSelectionDialog(frame, this);
         dialog.setVisible(true);
         break;
@@ -227,7 +233,7 @@ public class Main extends JPanel implements KeyListener, ActionListener {
               // Automatically handle turn completion after move
               gameLogic.handleTurn((Void) -> {
                 if (gameLogic.getWinningTeam() != null) {
-                  positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'Start Game' to play again.");
+                  positionLabel.setText(gameLogic.getWinningTeam().getTeamName() + " WINS! Press 'New Game' to play again.");
                 } else if (gameLogic.isWaitingForRoll()) {
                   positionLabel.setText(gameLogic.getCurrentTeam().getTeamName() + "'s turn - press SPACE");
                 }

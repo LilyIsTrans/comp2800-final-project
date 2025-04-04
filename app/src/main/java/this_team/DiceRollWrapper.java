@@ -110,20 +110,6 @@ public class DiceRollWrapper extends JDialog {
         // Add the scene to the universe.
         universe.addBranchGraph(scene);
         
-        // Create a control panel with only a "Roll Dice" button.
-        JPanel controlPanel = new JPanel(new FlowLayout());
-        JButton rollBtn = new JButton("Roll Dice");
-        rollBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Reset and roll the dice exactly as in Dice.java.
-                dice.resetRoll();
-                int result = dice.roll();
-            }
-        });
-        controlPanel.add(rollBtn);
-        getContentPane().add(controlPanel, BorderLayout.SOUTH);
-        
         // Create a timer to update dice physics (like in Dice.java main).
         physicsTimer = new Timer(16, new ActionListener() {
             @Override

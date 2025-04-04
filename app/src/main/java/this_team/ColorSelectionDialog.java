@@ -36,6 +36,9 @@ public class ColorSelectionDialog extends JDialog implements ActionListener {
     add(selectButton, BorderLayout.SOUTH);
 
     pack();
+    // Double the width (x dimension) of the dialog
+    Dimension d = getSize();
+    setSize(new Dimension(d.width * 2, d.height));
     setLocationRelativeTo(parent);
   }
 
